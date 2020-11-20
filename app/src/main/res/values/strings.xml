@@ -2,4 +2,6 @@
     <string name="app_name">Challenge Tracker</string>
     <string name="time">Elapsed time:</string>
     <string name="distance">Distance:</string>
+    <string name="start"><b>start</b></string>
+    <string name="stop"><b>stop</b></string>
 </resources>

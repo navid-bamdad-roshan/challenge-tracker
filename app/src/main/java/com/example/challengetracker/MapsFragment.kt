@@ -37,8 +37,6 @@ class MapsFragment : Fragment() {
             }
             lastLocation = it
         }
-//        val sydney = LatLng(-34.0, 151.0)
-//        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
     }
 
 
