@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Challenge Tracker</string>
+    <string name="time">Elapsed time:</string>
+    <string name="distance">Distance:</string>
 </resources>
