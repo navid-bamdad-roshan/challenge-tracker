@@ -9,7 +9,6 @@ import com.google.android.gms.maps.*
 
 
 class MainActivity : AppCompatActivity(){
-    private lateinit var mMap: GoogleMap
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val REQUEST_LOCATION = 7
 
