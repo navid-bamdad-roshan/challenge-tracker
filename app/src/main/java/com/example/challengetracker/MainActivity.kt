@@ -9,7 +9,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        btn_test.setOnClickListener {
+        btn_start_activity.setOnClickListener {
             intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }
