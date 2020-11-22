@@ -24,6 +24,10 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
         googleMap.isMyLocationEnabled = true
+//        mMap.setOnMyLocationChangeListener {
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 16f))
+//        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -33,6 +37,7 @@ class MapsFragment : Fragment() {
     }
     fun updateMap(location: Location){
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 16f))
+
         if(lastLocation != null) {
             Log.i(TAG, "drawLine")
             mMap.addPolyline(
