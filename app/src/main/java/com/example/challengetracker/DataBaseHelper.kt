@@ -12,27 +12,24 @@ import java.time.format.DateTimeFormatter
 
 object DataBaseHelper{
 
-    init {
-    }
-
-
+    init {}
 
     private lateinit var applicationContext: Context
 
     private lateinit var db: FirebaseFirestore
 
-    private val sharedPreferencesFileKey = "challenge_tracker"
-    private val curChallengeNameKey = "current_challenge_name"
-    private val curActivityNameKey = "current_activity_name"
-    private val curChallengeIdKey = "current_challenge_id"
-    private val curActivityIdKey = "current_activity_id"
-    private val nicknameKey = "nickname"
+    private const val sharedPreferencesFileKey = "challenge_tracker"
+    private const val curChallengeNameKey = "current_challenge_name"
+    private const val curActivityNameKey = "current_activity_name"
+    private const val curChallengeIdKey = "current_challenge_id"
+    private const val curActivityIdKey = "current_activity_id"
+    private const val nicknameKey = "nickname"
 
 
 
-    private val challengesCollectionName = "challenges"
-    private val challengeActivitiesCollectionName = "challengeActivities"
-    private val userActivitiesCollectionName = "userActivities"
+    private const val challengesCollectionName = "challenges"
+    private const val challengeActivitiesCollectionName = "challengeActivities"
+    private const val userActivitiesCollectionName = "userActivities"
 
 
     // To set the application context
@@ -136,13 +133,14 @@ object DataBaseHelper{
 
 
 
-    fun addNewUserActivity(userNickname: String, points:Float, challengeId:String, challengeActivityId:String, insertionFinished: (userActivityId: String)->Unit){
+    fun addNewUserActivity(userNickname: String, points:Float, challengeId:String, challengeActivityId:String, challengeActivityName:String, insertionFinished: (userActivityId: String)->Unit){
         val userActivityCollection = db.collection(userActivitiesCollectionName)
         val tempUserActivity = hashMapOf(
                 "username" to userNickname,
                 "points" to points,
                 "challengeId" to challengeId,
-                "challengeActivityId" to challengeActivityId
+                "challengeActivityId" to challengeActivityId,
+                "challengeActivityName" to challengeActivityName
         )
         userActivityCollection.add(tempUserActivity).addOnSuccessListener {
             insertionFinished(it.id)
@@ -150,8 +148,26 @@ object DataBaseHelper{
     }
 
 
-    fun getUserActivitiesByUsername(){
-        TODO()
+    fun getUserActivitiesByUsernameAndChallengeId(username: String, challengeId:String, getResult: (userActivities: ArrayList<UserActivity>)->Unit){
+        val userActivitiesCollection = db.collection(userActivitiesCollectionName)
+        userActivitiesCollection.whereEqualTo("username", username).whereEqualTo("challengeId", challengeId).get().addOnSuccessListener { userActivities ->
+            val userActivitiesArray = arrayListOf<UserActivity>()
+            userActivities.documents.map { userActivity ->
+
+                val tempUsername = userActivity.data?.get("username").toString()
+                val tempPoints = userActivity.data?.get("points").toString().toFloat()
+                val tempId = userActivity.id
+                val tempChallengeId = userActivity.data?.get("challengeId").toString()
+                val tempChallengeActivityId = userActivity.data?.get("challengeActivityId").toString()
+                val tempChallengeActivityName = userActivity.data?.get("challengeActivityName").toString()
+
+                userActivitiesArray.add(UserActivity(username=tempUsername, points = tempPoints, id = tempId,
+                        challengeId = tempChallengeId, challengeActivityId = tempChallengeActivityId,
+                        challengeActivityName = tempChallengeActivityName )
+                )
+            }
+            getResult(userActivitiesArray)
+        }
     }
 
 
@@ -217,35 +233,76 @@ object DataBaseHelper{
                     tempChallengeActivityArray.filter { it -> it.id == challengeInstance.id }.map {
                         challengesArray[challengeIndex].activities.add(it)
                     }
-
                 }
-
                 getResult(challengesArray)
             }
         }
     }
 
 
-    fun getAllActivitiesByNickname(){
-        TODO()
-    }
 
 
-    fun getLeadingPointByChallengeName(){
-        TODO()
+    fun getLeadingUsersByChallengeId(challengeId: String, getResult: (ArrayList<User>) -> Unit){
+        val userActivitiesCollection = db.collection(userActivitiesCollectionName)
+        userActivitiesCollection.whereEqualTo("challengeId", challengeId).get().addOnSuccessListener { userActivities ->
+            val userActivitiesArray = arrayListOf<UserActivity>()
+            userActivities.documents.map { userActivity ->
+                val tempUsername = userActivity.data?.get("username").toString()
+                val tempPoints = userActivity.data?.get("points").toString().toFloat()
+                val tempId = userActivity.id
+                val tempChallengeId = userActivity.data?.get("challengeId").toString()
+                val tempChallengeActivityId = userActivity.data?.get("challengeActivityId").toString()
+                val tempChallengeActivityName = userActivity.data?.get("challengeActivityName").toString()
+
+                userActivitiesArray.add(UserActivity(username=tempUsername, points = tempPoints, id = tempId,
+                        challengeId = tempChallengeId, challengeActivityId = tempChallengeActivityId,
+                        challengeActivityName = tempChallengeActivityName )
+                )
+
+            }
+
+            // finding the points of each username
+            val points = hashMapOf<String, Float>()
+            val users = arrayListOf<User>()
+            userActivitiesArray.map { userActivity ->
+                if(points.containsKey(userActivity.username)){
+                    var tempPoint = points[userActivity.username]
+                    tempPoint?.let {
+                        points[userActivity.username] = tempPoint + userActivity.points
+                    }
+                }else{
+                    points[userActivity.username] = userActivity.points
+                }
+            }
+            points.map {
+                users.add(User(username = it.key, points = it.value))
+            }
+            getResult(users)
+        }
     }
 
 }
 
-data class ChallengeActivity(var name: String, var pointPerKm: Float, var id:String = ""){
-
+data class ChallengeActivity(var name: String,
+                             var pointPerKm: Float,
+                             var id:String = ""){
 }
 
-data class Challenge(var name: String, var deadline: LocalDate, var id: String = ""){
+data class User(var username: String, var points: Float){
+}
+
+data class Challenge(var name: String,
+                     var deadline: LocalDate,
+                     var id: String = ""){
     var activities = arrayListOf<ChallengeActivity>()
 }
 
-data class UserActivity(var username:String, var points:Float, var id:String = ""){
+data class UserActivity(var username:String,
+                        var points:Float,
+                        var id:String = "",
+                        var challengeId: String="",
+                        var challengeActivityId: String = "",
+                        var challengeActivityName: String = "" ){
 
 }
 

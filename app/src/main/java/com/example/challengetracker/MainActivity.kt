@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,6 +27,30 @@ class MainActivity : AppCompatActivity() {
             intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }
+
+
+
+//        DataBaseHelper.addNewUserActivity("tempUser", 10F, "eCYl9TuShYqjQEfvfLiR", "LlaOn5YW4GhGQwXL0MJw"){
+//            Log.i("logg", "insert successful: "+it)
+//        }
+
+
+
+//        DataBaseHelper.getUserActivitiesByUsernameAndChallengeId("tempUser", "eCYl9TuShYqjQEfvfLiR"){
+//            Log.i("logg", "num: "+it.size.toString())
+//            it.map {
+//                Log.i("logg", "challenge activity name: "+it.challengeActivityName)
+//            }
+//        }
+
+
+//        DataBaseHelper.getLeadingUsersByChallengeId("0yQPsdExBSAcdC3nCQUe"){
+//            it.map {
+//                Log.i("logg", it.username)
+//                Log.i("logg", it.points.toString())
+//
+//            }
+//        }
 
 
 
