@@ -25,7 +25,6 @@ class MapsActivity : AppCompatActivity(){
         var activityActive = false
         val TAG = "MapsActivity"
         var meter :Chronometer? = null
-
     }
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val REQUEST_LOCATION = 7
@@ -79,7 +78,6 @@ class MapsActivity : AppCompatActivity(){
     fun updateMap(location:Location){
         Log.i(TAG, "update $totaldist")
         text_dist.text = "${round(totaldist/10f)/100f} km"
-        MapsFragment.points.add(LatLng(location.latitude, location.longitude))
         fragment.updateMap(location)
     }
 
