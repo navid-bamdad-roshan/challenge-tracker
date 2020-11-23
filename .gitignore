@@ -15,4 +15,7 @@
 local.properties
 *google_maps_api.xml
 *google-services.json
+*.pdf
+/report/build
+
 

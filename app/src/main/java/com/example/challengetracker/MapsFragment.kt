@@ -13,9 +13,15 @@ import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 
 class MapsFragment : Fragment() {
+    companion object{
+        var zoomLoc = LatLng(58.385254, 26.725064)
+        val zoomFactor = 16f
+        var points = mutableListOf<LatLng>()
+    }
     var lastLocation: Location?=null
     val TAG = "MapsFragment"
     lateinit var mMap:GoogleMap
@@ -24,10 +30,9 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
         googleMap.isMyLocationEnabled = true
-//        mMap.setOnMyLocationChangeListener {
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 16f))
-//        }
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
+        Log.i(TAG, "draw again")
+        mMap.addPolyline(PolylineOptions().addAll(points))
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -36,8 +41,8 @@ class MapsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
     fun updateMap(location: Location){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 16f))
-
+        zoomLoc = LatLng(location.latitude, location.longitude)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         if(lastLocation != null) {
             Log.i(TAG, "drawLine")
             mMap.addPolyline(

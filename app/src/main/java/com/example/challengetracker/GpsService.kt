@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 
 class GpsService : Service() {
 
@@ -85,6 +86,7 @@ class GpsService : Service() {
             override fun onLocationResult(result: LocationResult?) {
                 result?.let {
                     Log.i(TAG, "got non null result")
+                    MapsFragment.points.add(LatLng(it.lastLocation.latitude, it.lastLocation.longitude))
                     if(lastLocation == null){
                         lastLocation = it.lastLocation
                         sendBroadcast(Intent(LocationReceiver.LOCATION_ACTION).apply {

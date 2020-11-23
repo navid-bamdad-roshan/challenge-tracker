@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
 
@@ -24,8 +25,6 @@ class MapsActivity : AppCompatActivity(){
         var activityActive = false
         val TAG = "MapsActivity"
         var meter :Chronometer? = null
-
-
     }
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val REQUEST_LOCATION = 7
