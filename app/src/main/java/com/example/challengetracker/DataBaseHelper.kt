@@ -113,7 +113,8 @@ object DataBaseHelper{
         val challengesCollection = db.collection(challengesCollectionName)
         val tempChallenge = hashMapOf(
             "name" to challenge.name,
-            "deadline" to challenge.deadline.toString()
+            "deadline" to challenge.deadline.toString(),
+            "goalPoints" to challenge.goalPoints.toString()
         )
         val adding = challengesCollection.add(tempChallenge).addOnSuccessListener { it ->
             var tempChallengeId = it.id
@@ -176,7 +177,8 @@ object DataBaseHelper{
         val challengesCollection = db.collection(challengesCollectionName)
         challengesCollection.document(challengeId).get().addOnSuccessListener { it ->
             val date = LocalDate.parse(it.data?.get("deadline").toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            var tempChallenge = Challenge(name = it.data?.get("name").toString(), deadline = date, id= it.id)
+            val goalPoints = it.data?.get("goalPoints").toString().toFloat()
+            var tempChallenge = Challenge(name = it.data?.get("name").toString(), deadline = date, goalPoints=goalPoints, id= it.id)
 
             // getting challenge activities
             val challengeActivityCollection = db.collection(challengeActivitiesCollectionName)
@@ -205,9 +207,10 @@ object DataBaseHelper{
                 )
                 var tempChallenge = Challenge(
                     name = challengeInstance.data?.get("name").toString(),
-                    deadline = date
+                    deadline = date,
+                    goalPoints = challengeInstance.data?.get("goalPoints").toString().toFloat(),
+                    id = challengeInstance.id
                 )
-                tempChallenge.id = challengeInstance.id
                 challengesArray.add(tempChallenge)
             }
 
@@ -293,6 +296,7 @@ data class User(var username: String, var points: Float){
 
 data class Challenge(var name: String,
                      var deadline: LocalDate,
+                     var goalPoints: Float,
                      var id: String = ""){
     var activities = arrayListOf<ChallengeActivity>()
 }
