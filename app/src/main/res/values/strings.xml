@@ -13,4 +13,6 @@
     <string name="goal_points">Goal points</string>
     <string name="deadline">Deadline</string>
     <string name="leading_points">Leading points</string>
+    <string name="dark_mode_title">Dark Mode</string>
+    <string name="dark_mode_summary">Enable or disable dark mode</string>
 </resources>
