@@ -6,8 +6,6 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 object DataBaseHelper{
@@ -176,9 +174,14 @@ object DataBaseHelper{
     fun getChallengeById(challengeId: String, getResult: (challenge: Challenge)->Unit){
         val challengesCollection = db.collection(challengesCollectionName)
         challengesCollection.document(challengeId).get().addOnSuccessListener { it ->
-            val date = LocalDate.parse(it.data?.get("deadline").toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+
+            //val date = LocalDate.parse(it.data?.get("deadline").toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val date = it.data?.get("deadline").toString()
+
             val goalPoints = it.data?.get("goalPoints").toString().toFloat()
             var tempChallenge = Challenge(name = it.data?.get("name").toString(), deadline = date, goalPoints=goalPoints, id= it.id)
+
 
             // getting challenge activities
             val challengeActivityCollection = db.collection(challengeActivitiesCollectionName)
@@ -201,10 +204,11 @@ object DataBaseHelper{
         challengesCollection.get().addOnSuccessListener { allChallenges ->
             val challengesArray = arrayListOf<Challenge>()
             allChallenges.documents.mapIndexed { challengeIndex, challengeInstance ->
-                val date = LocalDate.parse(
-                    challengeInstance.data?.get("deadline").toString(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                )
+//                val date = LocalDate.parse(
+//                    challengeInstance.data?.get("deadline").toString(),
+//                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
+//                )
+                val date = challengeInstance.data?.get("deadline").toString()
                 var tempChallenge = Challenge(
                     name = challengeInstance.data?.get("name").toString(),
                     deadline = date,
@@ -295,7 +299,7 @@ data class User(var username: String, var points: Float){
 }
 
 data class Challenge(var name: String,
-                     var deadline: LocalDate,
+                     var deadline: String,
                      var goalPoints: Float,
                      var id: String = ""){
     var activities = arrayListOf<ChallengeActivity>()

@@ -3,6 +3,7 @@ package com.example.challengetracker
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.currentChallengeId = DataBaseHelper.getCurrentChallengeId()
         viewModel.username = DataBaseHelper.getNickname()
+
 
 
         val scope = CoroutineScope(Dispatchers.Default)
@@ -99,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     private fun setChallengeToView(){
         tv_user_points_value.text = viewModel.userPoints.toString()
         tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
-        tv_deadline_value.text = viewModel.selectedChallenge.deadline.toString()
+        tv_deadline_value.text = viewModel.selectedChallenge.deadline
         tv_leading_point_value.text = viewModel.leadingPoint.toString()
     }
 
