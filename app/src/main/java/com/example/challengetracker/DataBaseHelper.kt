@@ -170,7 +170,7 @@ object DataBaseHelper{
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+   // @RequiresApi(Build.VERSION_CODES.O)
     fun getChallengeById(challengeId: String, getResult: (challenge: Challenge)->Unit){
         val challengesCollection = db.collection(challengesCollectionName)
         challengesCollection.document(challengeId).get().addOnSuccessListener { it ->
@@ -293,6 +293,9 @@ object DataBaseHelper{
 data class ChallengeActivity(var name: String,
                              var pointPerKm: Float,
                              var id:String = ""){
+    override fun toString(): String {
+        return name
+    }
 }
 
 data class User(var username: String, var points: Float){
@@ -303,6 +306,7 @@ data class Challenge(var name: String,
                      var goalPoints: Float,
                      var id: String = ""){
     var activities = arrayListOf<ChallengeActivity>()
+
 }
 
 data class UserActivity(var username:String,
