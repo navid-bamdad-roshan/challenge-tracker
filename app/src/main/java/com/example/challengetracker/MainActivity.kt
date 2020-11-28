@@ -88,8 +88,8 @@ class MainActivity : AppCompatActivity() {
 
 
         btn_create_new_challenge.setOnClickListener {
-//            intent = Intent(this, ::class.java)
-//            startActivity(intent)
+            intent = Intent(this, NewChallengeActivity::class.java)
+            startActivity(intent)
         }
 
 
