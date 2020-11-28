@@ -32,15 +32,10 @@ class MainActivity : AppCompatActivity() {
 
         DataBaseHelper.setAppContext(this.applicationContext)
 
-
         // Getting viewModel instance
         viewModel = ViewModelProvider(this).get(RecipeViewModel::class.java)
-
-
         // Set challenge spinner adapter
         spinner_challenges.adapter = viewModel.adapter
-
-
         viewModel.currentChallengeId = DataBaseHelper.getCurrentChallengeId()
         viewModel.username = DataBaseHelper.getNickname()
 

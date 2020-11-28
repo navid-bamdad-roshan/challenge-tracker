@@ -26,18 +26,24 @@ class MapsFragment : Fragment() {
         var points = mutableListOf<LatLng>()
     }
     var lastLocation: Location?=null
+    var locationGranted = false
     val TAG = "MapsFragment"
-    lateinit var mMap:GoogleMap
+    var mMap:GoogleMap? = null
 
-    @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
-        googleMap.isMyLocationEnabled = true
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         Log.i(TAG, "draw again")
-        mMap.addPolyline(PolylineOptions().addAll(points))
+        mMap?.addPolyline(PolylineOptions().addAll(points))
+        if (locationGranted){
+            enableMyLocation()
+        }
     }
-
+    @SuppressLint("MissingPermission")
+    fun enableMyLocation(){
+        mMap?.isMyLocationEnabled = true
+        locationGranted = true
+    }
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -45,10 +51,10 @@ class MapsFragment : Fragment() {
     }
     fun updateMap(location: Location){
         zoomLoc = LatLng(location.latitude, location.longitude)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         if(lastLocation != null) {
             Log.i(TAG, "drawLine")
-            mMap.addPolyline(
+            mMap?.addPolyline(
                 PolylineOptions().add(
                     LatLng(
                         lastLocation!!.latitude,
@@ -61,7 +67,7 @@ class MapsFragment : Fragment() {
     }
 
     fun clearMap(){
-        mMap.clear()
+        mMap?.clear()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
