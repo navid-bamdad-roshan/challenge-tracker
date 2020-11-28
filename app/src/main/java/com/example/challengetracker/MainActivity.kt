@@ -3,13 +3,13 @@ package com.example.challengetracker
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -38,33 +38,20 @@ class MainActivity : AppCompatActivity() {
         spinner_challenges.adapter = viewModel.adapter
 
 
-        viewModel.currentChallengeId = DataBaseHelper.getCurrentChallengeId()
-        viewModel.username = DataBaseHelper.getNickname()
 
-
-
-        val scope = CoroutineScope(Dispatchers.Default)
-        scope.launch {
-            DataBaseHelper.getAllChallenges() {
-                viewModel.challenges = it
-                it.map {
-                    viewModel.adapter.add(it.name)
-                }
-
-                // Select current challenge as default for challenges spinner
-                if (viewModel.currentChallengeId != ""){
-                    val scope2 = CoroutineScope(Dispatchers.Main)
-                    scope2.launch {
-                        val index = viewModel.challenges.indexOfFirst { it.id == viewModel.currentChallengeId }
-                        spinner_challenges.setSelection(index + 1)
-                    }
-                }
-
+        // Select default challenge in spinner once the data is received from database
+        viewModel.setSpinnerDefaultValue.observe(this, Observer { event ->
+            event?.getContentIfNotHandledOrReturnNull()?.let {
+                // plus one because first row is "select a challenge"
+                spinner_challenges.setSelection(it.toInt().plus(1))
             }
-        }
+        })
 
 
 
+
+
+        // Handling spinner select event
         spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -98,7 +85,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setChallengeToView(){
+
+
+    private fun setChallengeDataToView(){
         tv_user_points_value.text = viewModel.userPoints.toString()
         tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
         tv_deadline_value.text = viewModel.selectedChallenge.deadline
@@ -131,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                             viewModel.leadingPoint = maxPoint
                         }
                     }
-                    setChallengeToView()
+                    setChallengeDataToView()
                 }
             }
         }
@@ -153,11 +142,4 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
-
-
-
-
 }
