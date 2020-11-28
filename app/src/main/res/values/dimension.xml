@@ -3,4 +3,9 @@
     <dimen name="main_activity_topic_text_size">36sp</dimen>
     <dimen name="main_activity_text_size">20sp</dimen>
     <dimen name="main_activity_parts_margin">64dp</dimen>
+    <dimen name="maps_activity_label_size">18sp</dimen>
+    <dimen name="maps_activity_value_size">24sp</dimen>
+    <dimen name="maps_activity_min_width">110dp</dimen>
+    <dimen name="maps_activity_margin">8dp</dimen>
+
 </resources>

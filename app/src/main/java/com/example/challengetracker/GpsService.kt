@@ -1,17 +1,20 @@
 package com.example.challengetracker
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.*
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -67,7 +70,6 @@ class GpsService : Service() {
     }
 
     // Do the permissions stuff before starting this service.
-    @SuppressLint("MissingPermission")
     private fun startLocationTracking(){
         val locationRequest = LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -106,7 +108,11 @@ class GpsService : Service() {
             }
         }
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }else {
+            fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
     }
     private fun stopLocationTracking(){
         Log.i(TAG, "tracking stopped")

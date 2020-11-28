@@ -1,6 +1,8 @@
 package com.example.challengetracker
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import androidx.fragment.app.Fragment
 
@@ -9,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
