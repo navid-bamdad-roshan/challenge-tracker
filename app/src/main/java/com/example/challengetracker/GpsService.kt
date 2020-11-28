@@ -1,20 +1,20 @@
 package com.example.challengetracker
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.*
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -44,23 +44,19 @@ class GpsService : Service() {
             context.sendBroadcast(Intent(GPS_ACTION).apply { putExtra(ACTION_NAME, ACTION_STOP_TRACKING) })
     }
 
-
-
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i("GpsService", "started Service")
-        MapsActivity.totaldist = 0f
+//        MapsActivity.totaldist = 0f
         this.startId = startId
-//        startForeground(startId, getNotification())
+        startForeground(startId, getNotification())
         startLocationTracking()
         registerReceiver(actionReceiver, IntentFilter(GPS_ACTION))
         return super.onStartCommand(intent, flags, startId)
     }
-
-
 
     override fun onDestroy() {
         kotlin.runCatching { unregisterReceiver(actionReceiver) }
@@ -74,7 +70,6 @@ class GpsService : Service() {
     }
 
     // Do the permissions stuff before starting this service.
-    @SuppressLint("MissingPermission")
     private fun startLocationTracking(){
         val locationRequest = LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -82,6 +77,7 @@ class GpsService : Service() {
             maxWaitTime = 1000
             smallestDisplacement = 0.0f
         }
+
         locationCallback = object: LocationCallback() {
             override fun onLocationResult(result: LocationResult?) {
                 result?.let {
@@ -97,6 +93,7 @@ class GpsService : Service() {
                     it.lastLocation?.let { its_last ->
                         val distanceInMeters = its_last.distanceTo(lastLocation)
                         Log.i(TAG, "check accuracy: acc ${its_last.accuracy}, change ${distanceInMeters}")
+                        // avoid moving due to poor accuracy
                         if(its_last.accuracy < distanceInMeters) {
                             MapsActivity.totaldist += distanceInMeters.toLong()
                             Log.i(TAG, "Completed: ${MapsActivity.totaldist} meters, (added $distanceInMeters)")
@@ -111,45 +108,56 @@ class GpsService : Service() {
             }
         }
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }else {
+            fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
     }
     private fun stopLocationTracking(){
         Log.i(TAG, "tracking stopped")
         fusedClient.removeLocationUpdates(locationCallback)
     }
 
-//    private fun getNotification(): Notification? {
-//
-//        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            createNotificationChannel("gps_tracker", "GPS Tracker")
-//        } else {
-//            // If earlier version channel ID is not used
-//            // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
-//            ""
-//        }
-//
-//        val b = NotificationCompat.Builder(this, channelId)
-//
-//        b.setOngoing(true)
-//            .setContentTitle("Currently tracking GPS location...")
-//            .setSmallIcon(R.mipmap.ic_launcher)
-//        return b.build()
-//    }
+    private fun getNotification(): Notification? {
 
-//    override fun onTaskRemoved(rootIntent: Intent) {
-//        val restartServiceIntent = Intent(applicationContext, this.javaClass)
-//        restartServiceIntent.setPackage(packageName)
-//        startService(restartServiceIntent)
-//        super.onTaskRemoved(rootIntent)
-//    }
+        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel("gps_tracker", "GPS Tracker")
+        } else {
+            // If earlier version channel ID is not used
+            // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
+            ""
+        }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun createNotificationChannel(channelId: String, channelName: String): String{
-//        val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
-//        chan.lightColor = Color.BLUE
-//        chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-//        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        service.createNotificationChannel(chan)
-//        return channelId
-//    }
+        val intent = Intent(this, MapsActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val b = NotificationCompat.Builder(this, channelId)
+
+        b.setOngoing(true)
+            .setContentTitle("Currently tracking GPS location...")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(pendingIntent)
+//            .setAutoCancel(true) //remove notification when tapped
+        return b.build()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent) {
+        val restartServiceIntent = Intent(applicationContext, this.javaClass)
+        restartServiceIntent.setPackage(packageName)
+        startService(restartServiceIntent)
+        super.onTaskRemoved(rootIntent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(channelId: String, channelName: String): String{
+        val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
+        chan.lightColor = Color.BLUE
+        chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        service.createNotificationChannel(chan)
+        return channelId
+    }
 }

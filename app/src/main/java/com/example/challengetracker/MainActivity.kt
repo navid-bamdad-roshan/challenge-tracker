@@ -9,8 +9,10 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,15 +27,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
+
+        setupSettings()
 
         DataBaseHelper.setAppContext(this.applicationContext)
 
-
         // Getting viewModel instance
         viewModel = ViewModelProvider(this).get(RecipeViewModel::class.java)
-
-
         // Set challenge spinner adapter
         spinner_challenges.adapter = viewModel.adapter
 
@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // Handling spinner select event
         spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -72,8 +71,8 @@ class MainActivity : AppCompatActivity() {
 
 
         btn_create_new_challenge.setOnClickListener {
-//            intent = Intent(this, ::class.java)
-//            startActivity(intent)
+            intent = Intent(this, NewChallengeActivity::class.java)
+            startActivity(intent)
         }
 
 
@@ -127,6 +126,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun setupSettings() {
+        supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
+        val darkMode = getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
+        if (!darkMode)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.settings, menu)

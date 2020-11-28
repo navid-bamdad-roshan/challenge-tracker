@@ -1,6 +1,8 @@
 package com.example.challengetracker
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import androidx.fragment.app.Fragment
 
@@ -9,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
@@ -23,18 +26,24 @@ class MapsFragment : Fragment() {
         var points = mutableListOf<LatLng>()
     }
     var lastLocation: Location?=null
+    var locationGranted = false
     val TAG = "MapsFragment"
-    lateinit var mMap:GoogleMap
+    var mMap:GoogleMap? = null
 
-    @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
-        googleMap.isMyLocationEnabled = true
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         Log.i(TAG, "draw again")
-        mMap.addPolyline(PolylineOptions().addAll(points))
+        mMap?.addPolyline(PolylineOptions().addAll(points))
+        if (locationGranted){
+            enableMyLocation()
+        }
     }
-
+    @SuppressLint("MissingPermission")
+    fun enableMyLocation(){
+        mMap?.isMyLocationEnabled = true
+        locationGranted = true
+    }
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,10 +51,10 @@ class MapsFragment : Fragment() {
     }
     fun updateMap(location: Location){
         zoomLoc = LatLng(location.latitude, location.longitude)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         if(lastLocation != null) {
             Log.i(TAG, "drawLine")
-            mMap.addPolyline(
+            mMap?.addPolyline(
                 PolylineOptions().add(
                     LatLng(
                         lastLocation!!.latitude,
@@ -56,6 +65,11 @@ class MapsFragment : Fragment() {
         }
         lastLocation = location
     }
+
+    fun clearMap(){
+        mMap?.clear()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
