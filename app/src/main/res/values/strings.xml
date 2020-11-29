@@ -19,4 +19,5 @@
     <string name="create_new_challenge_name">Challenge Name</string>
     <string name="default_new_challenge_name">New Challenge</string>
     <string name="default_new_challenge_points">10</string>
+    <string name="default_new_challenge_date">YYYY-MM-DD</string>
 </resources>
