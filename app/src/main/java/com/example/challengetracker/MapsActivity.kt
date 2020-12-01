@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.database.DataSetObserver
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -12,16 +13,13 @@ import android.os.PersistableBundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Chronometer
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_maps.*
-import java.lang.Error
 import java.lang.Math.round
 
 
@@ -38,6 +36,7 @@ class MapsActivity : AppCompatActivity(){
         var spinner_pos = 0
     }
     lateinit var fragment : MapsFragment
+    lateinit var spinnerAdapter : SpinnerAdapter
     private val locationReceiver : BroadcastReceiver= LocationReceiver().apply {
         setMapsActivityHandler(this@MapsActivity)
     }
@@ -50,25 +49,28 @@ class MapsActivity : AppCompatActivity(){
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "Create")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         DataBaseHelper.setAppContext(this.applicationContext)
         setupSettings()
         setupFragment()
-        setUiElements()
         var activity = mutableListOf<ChallengeActivity>(ChallengeActivity("Select an activity", 0f, ""))
         DataBaseHelper.getChallengeById("eCYl9TuShYqjQEfvfLiR"){ challenge ->
             challenge.activities.forEach(){
+                Log.i(TAG, "new activity added")
                 activity.add(it)
             }
+            spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, activity)
+            spinner_activity.adapter= spinnerAdapter
+            Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
+            if(spinnerAdapter.count > spinner_pos){
+                spinner_activity.setSelection(spinner_pos)
+            }
           }
-            spinner_activity.adapter=ArrayAdapter(this, android.R.layout.simple_spinner_item, activity)
-//        savedInstanceState?.let {
-//            val pos = savedInstanceState.getInt("activitySpinner", 0)
-//            Log.i(TAG, "spinner from saved instance ${pos}")
-            spinner_activity.setSelection(spinner_pos)
-//        }
 
+
+        setUiElements()
         //register receiver for Broadcasts from GPS service
         val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
         registerReceiver(locationReceiver, filter)
@@ -114,6 +116,8 @@ class MapsActivity : AppCompatActivity(){
             c_meter.base = meter!!.base
             btn_startStop.text = getString(R.string.stop)
             c_meter.start()
+
+            spinner_activity.isEnabled = false
         }
         meter = c_meter
         text_dist.text = "${round(totaldist / 10f) / 100f} km"
@@ -129,7 +133,7 @@ class MapsActivity : AppCompatActivity(){
                 val points = totaldist * activity.pointPerKm
                 Log.i(TAG, "points of activity: ${activity.pointPerKm}")
                 //submit activity
-                 DataBaseHelper.addNewUserActivity("name", points,DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
+                 DataBaseHelper.addNewUserActivity("name", points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
                      Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
                  }
                 //release dropdown
@@ -195,9 +199,9 @@ class MapsActivity : AppCompatActivity(){
     }
 
 
-    fun updateMap(location:Location){
+    fun updateMap(location: Location){
         Log.i(TAG, "update $totaldist")
-        text_dist.text = "${round(totaldist/10f)/100f} km"
+        text_dist.text = "${round(totaldist / 10f)/100f} km"
         fragment.updateMap(location)
     }
 
