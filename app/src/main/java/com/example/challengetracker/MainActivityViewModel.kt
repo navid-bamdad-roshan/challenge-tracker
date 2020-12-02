@@ -15,12 +15,15 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
-    var currentChallengeId = DataBaseHelper.getCurrentChallengeId()
-    var username = DataBaseHelper.getNickname()
+    var currentChallengeId = ""
+    var username = ""
     val setSpinnerDefaultValue = MutableLiveData<Event<String>>()
 
 
     init {
+
+        currentChallengeId = DataBaseHelper.getCurrentChallengeId()
+        username = DataBaseHelper.getNickname()
 
         val scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
@@ -76,7 +79,7 @@ open class Event<out T>(private val content: T) {
     /**
      * Returns the content and prevents its use again.
      */
-    fun getContentIfNotHandledOrReturnNull(): T? {
+    fun getCurrentChallengeIndex(): T? {
         return if (hasBeenHandled) {
             null
         } else {

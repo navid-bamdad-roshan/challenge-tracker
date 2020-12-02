@@ -41,13 +41,26 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // Select default challenge in spinner once the data is received from database
-        viewModel.setSpinnerDefaultValue.observe(this, Observer { event ->
-            event?.getContentIfNotHandledOrReturnNull()?.let {
-                // plus one because first row is "select a challenge"
-                spinner_challenges.setSelection(it.toInt().plus(1))
-            }
-        })
+        Log.i("logg", "curr:"+DataBaseHelper.getCurrentChallengeId())
+
+        if (viewModel.challenges.size > 1){
+            // Select default challenge in spinner once the challenges data is already in the viewModel
+            val index = viewModel.challenges.indexOfFirst { it.id == viewModel.currentChallengeId }
+            // plus one because first row is "select a challenge"
+            spinner_challenges.setSelection(index.plus(1))
+
+        }else {
+            // Select default challenge in spinner once the data is received from database
+            viewModel.setSpinnerDefaultValue.observe(this, Observer { event ->
+                event?.getCurrentChallengeIndex()?.let {
+                    // plus one because first row is "select a challenge"
+                    spinner_challenges.setSelection(it.toInt().plus(1))
+                }
+            })
+        }
+
+
+
 
 
 
@@ -61,6 +74,8 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position>0){
                     viewModel.selectedChallenge = viewModel.challenges[position-1]
+                    DataBaseHelper.setCurrentChallenge(viewModel.selectedChallenge.name, viewModel.selectedChallenge.id)
+                    viewModel.currentChallengeId = viewModel.selectedChallenge.id
                     getUserActivities()
                 }else{
                     clearView()
