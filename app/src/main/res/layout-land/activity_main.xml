@@ -9,9 +9,9 @@
         android:id="@+id/tv_main_activity_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/main_activity_topic"
         android:textSize="@dimen/main_activity_topic_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,13 +22,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_goal_points_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_challenge_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_main_activity_topic" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
 
     <TextView
@@ -36,41 +36,41 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:text="@string/challenge"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_user_points_text"
         app:layout_constraintEnd_toStartOf="@+id/spinner_challenges"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_main_activity_topic" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <TextView
         android:id="@+id/tv_user_points_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/your_points"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_leading_point_text"
         app:layout_constraintEnd_toStartOf="@+id/tv_user_points_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_challenges" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_challenge_text" />
 
     <TextView
         android:id="@+id/tv_user_points_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_leading_point_value"
         app:layout_constraintEnd_toStartOf="@+id/tv_goal_points_text"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_user_points_text"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_challenges" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_challenge_text" />
 
 
     <TextView
@@ -78,10 +78,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/goal_points"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_deadline_text"
         app:layout_constraintEnd_toStartOf="@+id/tv_goal_points_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_user_points_value"
@@ -92,9 +92,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/tv_deadline_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_goal_points_text"
@@ -106,27 +106,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/leading_points"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/tv_leading_point_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_goal_points_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_user_points_text" />
 
     <TextView
         android:id="@+id/tv_leading_point_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/tv_deadline_text"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_leading_point_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_goal_points_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_user_points_value" />
 
 
     <TextView
@@ -134,23 +134,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/deadline"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/tv_deadline_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_leading_point_value"
-        app:layout_constraintTop_toBottomOf="@+id/tv_goal_points_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_goal_points_text" />
 
     <TextView
         android:id="@+id/tv_deadline_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_deadline_text"
@@ -160,22 +160,36 @@
         android:id="@+id/btn_create_new_challenge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:text="@string/create_new_challenge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_start_activity"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <Button
         android:id="@+id/btn_start_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:text="@string/start_new_avtivity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_create_new_challenge" />
+        app:layout_constraintStart_toEndOf="@+id/btn_create_new_challenge"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
