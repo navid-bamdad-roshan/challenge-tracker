@@ -21,6 +21,8 @@ import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 
@@ -58,6 +60,11 @@ class MapsActivity : AppCompatActivity(){
         setupFragment()
         var activity = mutableListOf<ChallengeActivity>(ChallengeActivity("Select an activity", 0f, ""))
 
+
+        val dateString  = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
+//        Log.i(TAG, "checkDate $dateString < $testString ${dateString < testString}" )
+//        Log.i(TAG, "checkDate $dateString > $testString ${dateString > testString}")
+
         //todo get challenge -> set in mainactivity check for finished
         var challengeId = DataBaseHelper.getCurrentChallengeId()
         Log.i(TAG, "challengeId: $challengeId")
@@ -67,7 +74,7 @@ class MapsActivity : AppCompatActivity(){
             this.finish()
         }else {
             DataBaseHelper.getChallengeById(challengeId) { challenge ->
-                if (Calendar.getInstance().after(challenge.deadline)) {
+                if (dateString > challenge.deadline) {
                     Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
                     this.finish()
                 } else {
@@ -89,6 +96,7 @@ class MapsActivity : AppCompatActivity(){
         val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
         registerReceiver(locationReceiver, filter)
     }
+
     private fun setupSettings() {
         supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
         val darkMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
