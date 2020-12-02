@@ -56,6 +56,8 @@ class MapsActivity : AppCompatActivity(){
         setupSettings()
         setupFragment()
         var activity = mutableListOf<ChallengeActivity>(ChallengeActivity("Select an activity", 0f, ""))
+
+        //todo get challenge -> set in mainactivity check for finished
         DataBaseHelper.getChallengeById("eCYl9TuShYqjQEfvfLiR"){ challenge ->
             challenge.activities.forEach(){
                 Log.i(TAG, "new activity added")
@@ -68,8 +70,6 @@ class MapsActivity : AppCompatActivity(){
                 spinner_activity.setSelection(spinner_pos)
             }
           }
-
-
         setUiElements()
         //register receiver for Broadcasts from GPS service
         val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
@@ -133,6 +133,7 @@ class MapsActivity : AppCompatActivity(){
                 val points = totaldist * activity.pointPerKm
                 Log.i(TAG, "points of activity: ${activity.pointPerKm}")
                 //submit activity
+                //todo get name
                  DataBaseHelper.addNewUserActivity("name", points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
                      Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
                  }

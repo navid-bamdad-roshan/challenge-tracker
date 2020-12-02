@@ -50,7 +50,6 @@ class GpsService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i("GpsService", "started Service")
-//        MapsActivity.totaldist = 0f
         this.startId = startId
         startForeground(startId, getNotification())
         startLocationTracking()
@@ -69,7 +68,6 @@ class GpsService : Service() {
         stopSelf(startId)
     }
 
-    // Do the permissions stuff before starting this service.
     private fun startLocationTracking(){
         val locationRequest = LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -94,6 +92,7 @@ class GpsService : Service() {
                         val distanceInMeters = its_last.distanceTo(lastLocation)
                         Log.i(TAG, "check accuracy: acc ${its_last.accuracy}, change ${distanceInMeters}")
                         // avoid moving due to poor accuracy
+                        //todo better accuracy
                         if(its_last.accuracy < distanceInMeters) {
                             MapsActivity.totaldist += distanceInMeters.toLong()
                             Log.i(TAG, "Completed: ${MapsActivity.totaldist} meters, (added $distanceInMeters)")
@@ -109,7 +108,7 @@ class GpsService : Service() {
         }
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
+            stopTrackingService()
         }else {
             fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }

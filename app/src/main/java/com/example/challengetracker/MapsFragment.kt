@@ -26,7 +26,6 @@ class MapsFragment : Fragment() {
         var points = mutableListOf<LatLng>()
     }
     var lastLocation: Location?=null
-    var locationGranted = false
     val TAG = "MapsFragment"
     var mMap:GoogleMap? = null
 
@@ -35,14 +34,18 @@ class MapsFragment : Fragment() {
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(zoomLoc, zoomFactor))
         Log.i(TAG, "draw again")
         mMap?.addPolyline(PolylineOptions().addAll(points))
-        if (locationGranted){
-            enableMyLocation()
-        }
+        enableMyLocation()
+
     }
-    @SuppressLint("MissingPermission")
     fun enableMyLocation(){
-        mMap?.isMyLocationEnabled = true
-        locationGranted = true
+        if (context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) } == PackageManager.PERMISSION_GRANTED){
+            Log.i(TAG, "enable location")
+            mMap?.isMyLocationEnabled = true
+        }else{
+            if(MapsActivity.askingPermission.not()) {
+                activity?.let { ActivityCompat.requestPermissions(it, MapsActivity.permissions, MapsActivity.REQUEST_LOCATION) }
+            }
+        }
     }
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,

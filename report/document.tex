@@ -10,15 +10,12 @@
 	\section{Concept}
 	\subsection{Idea}
 	The general idea is to create an application that eases team-challenges. Challenges consist of a mapping of several disciplines (e.g. running, biking, ...) to corresponding points per km, a defined goal how many points should be collected and a deadline. Users can use the app for tracking their activities which automatically are stored in a database and see the current status of the challenge.
-	\subsection{Features}
-	Create Challenge
-	Track Challenge
-	See Status
-	\subsection{Audience}
-	Sport team
-	\subsection{Requirements}
+	\subsection{Features and Requirements}
+	\label{sec:req}
+	The application has to be able to create and track challenges. It must be possible to see the current status of a challenge and add new activities through tracking movement via GPS.
+	\subsection{Audience and Use Case}
+	The intended user for this application are people from a team. Together, they track their activities and contribute to common challenges. 
 	
-	\subsection{Use Case}
 	\section{Task Fulfillment}
 	Core Blocks
 	\begin{itemize}
@@ -29,21 +26,32 @@
 		\item Background workers
 	\end{itemize}
 	
-	Feature Blocks
+	The feature Blocks
 	\begin{itemize}
 		\item GPS
 		\item Persistent Storage
 		\item Services
 	\end{itemize}
-	Own Requirements
+	are used and thus, the requirement on the feature blocks is fulfilled. A GPS service is implemented to track activities. Firebase is used as a persistent storage in order to be able to share the activities and challenges between the users. 
+	
+	The own requirements from section \ref{sec:req} are fulfilled.
 	\section{Work}
-	distribution
+	The project was distributed into three parts:
+	\begin{itemize}
+		\item DataBase (Navid)
+		\item GPS (Ulrike)
+		\item Settings (Karl)
+	\end{itemize}
+	During the developement, each member of the team worked on his/her main task. In order to keep a common idea, a weekly meeting was instantiated. During the whole projects, minor questions and bugs were reported in a chat group.
+	
 	change of idea
 	Problems
 	\section{Future}
 	Multi Platform
 	
-	Manual entries
+	Manual entries, deletion
+	
+	Store activity details(path) locally
 	
 	Compare to other teams
 	
