@@ -18,9 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
+import java.text.DateFormat
+import java.util.*
 
 
 class MapsActivity : AppCompatActivity(){
@@ -58,18 +59,31 @@ class MapsActivity : AppCompatActivity(){
         var activity = mutableListOf<ChallengeActivity>(ChallengeActivity("Select an activity", 0f, ""))
 
         //todo get challenge -> set in mainactivity check for finished
-        DataBaseHelper.getChallengeById("eCYl9TuShYqjQEfvfLiR"){ challenge ->
-            challenge.activities.forEach(){
-                Log.i(TAG, "new activity added")
-                activity.add(it)
+        var challengeId = DataBaseHelper.getCurrentChallengeId()
+        Log.i(TAG, "challengeId: $challengeId")
+        if(challengeId == ""){
+            Log.i(TAG, "invalid challenge id")
+            Toast.makeText(applicationContext, "Please choose a challenge", Toast.LENGTH_SHORT).show()
+            this.finish()
+        }else {
+            DataBaseHelper.getChallengeById(challengeId) { challenge ->
+                if (Calendar.getInstance().after(challenge.deadline)) {
+                    Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
+                    this.finish()
+                } else {
+                    challenge.activities.forEach() {
+                        Log.i(TAG, "new activity added")
+                        activity.add(it)
+                    }
+                }
+                spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, activity)
+                spinner_activity.adapter = spinnerAdapter
+                Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
+                if (spinnerAdapter.count > spinner_pos) {
+                    spinner_activity.setSelection(spinner_pos)
+                }
             }
-            spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, activity)
-            spinner_activity.adapter= spinnerAdapter
-            Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
-            if(spinnerAdapter.count > spinner_pos){
-                spinner_activity.setSelection(spinner_pos)
-            }
-          }
+        }
         setUiElements()
         //register receiver for Broadcasts from GPS service
         val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
@@ -134,7 +148,8 @@ class MapsActivity : AppCompatActivity(){
                 Log.i(TAG, "points of activity: ${activity.pointPerKm}")
                 //submit activity
                 //todo get name
-                 DataBaseHelper.addNewUserActivity("name", points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
+                var name = DataBaseHelper.getNickname()
+                DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
                      Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
                  }
                 //release dropdown
