@@ -73,7 +73,7 @@ class GpsService : Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 500
             maxWaitTime = 1000
-            smallestDisplacement = 0.0f
+            smallestDisplacement = 3.0f
         }
 
         locationCallback = object: LocationCallback() {
@@ -91,9 +91,8 @@ class GpsService : Service() {
                     it.lastLocation?.let { its_last ->
                         val distanceInMeters = its_last.distanceTo(lastLocation)
                         Log.i(TAG, "check accuracy: acc ${its_last.accuracy}, change ${distanceInMeters}")
-                        // avoid moving due to poor accuracy
-                        //todo better accuracy
-                        if(its_last.accuracy < distanceInMeters) {
+
+                        if(valid(its_last, lastLocation!!)) {
                             MapsActivity.totaldist += distanceInMeters.toLong()
                             Log.i(TAG, "Completed: ${MapsActivity.totaldist} meters, (added $distanceInMeters)")
                             sendBroadcast(Intent(LocationReceiver.LOCATION_ACTION).apply {
@@ -113,6 +112,19 @@ class GpsService : Service() {
             fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
     }
+
+    private fun valid(new: Location, old: Location): Boolean {
+        // not valid if new position accuracy > 10m
+        if(new.accuracy>10){
+            return false
+        }
+        if(new.distanceTo(old)<old.accuracy && new.accuracy > old.accuracy){
+            return false
+        }
+        return true
+
+    }
+
     private fun stopLocationTracking(){
         Log.i(TAG, "tracking stopped")
         fusedClient.removeLocationUpdates(locationCallback)

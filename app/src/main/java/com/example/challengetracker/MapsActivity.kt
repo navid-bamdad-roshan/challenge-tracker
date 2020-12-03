@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.os.SystemClock
 import android.util.Log
 import android.widget.*
@@ -18,14 +17,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
-import androidx.lifecycle.Observer
 
 
 
@@ -83,7 +78,6 @@ class MapsActivity : AppCompatActivity(){
         if (dateString > viewModel.currenChallengeDate) {
             finishActivityDialog("The chosen challenge is expired")
         }
-
     }
 
     private fun setChallengeInfo() {
@@ -161,8 +155,8 @@ class MapsActivity : AppCompatActivity(){
     private fun setUiElements() {
         if (activityActive) {
             c_meter.base = meter!!.base
-            btn_startStop.text = getString(R.string.stop)
             c_meter.start()
+            btn_startStop.text = getString(R.string.stop)
             spinner_activity.isEnabled = false
         }
         meter = c_meter
@@ -174,16 +168,7 @@ class MapsActivity : AppCompatActivity(){
                     meter.stop()
                 }
                 GpsService.stopTracking(this)
-                //calculate points
-                val activity = spinner_activity.selectedItem as ChallengeActivity
-                val points = totaldist * activity.pointPerKm
-                Log.i(TAG, "points of activity: ${activity.pointPerKm}")
-                //submit activity
-                //todo get name
-                var name = DataBaseHelper.getNickname()
-                DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()){
-                     Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
-                 }
+                submitActivity()
                 //release dropdown
                 spinner_activity.isEnabled = true
                 btn_startStop.text = getString(R.string.start)
@@ -198,6 +183,21 @@ class MapsActivity : AppCompatActivity(){
                         ActivityCompat.requestPermissions(this, permissions, REQUEST_LOCATION_SERVICE)
                     }
                 }
+            }
+        }
+    }
+
+    private fun submitActivity() {
+    //calculate points
+            val activity = spinner_activity.selectedItem as ChallengeActivity
+            val points = totaldist * activity.pointPerKm
+            Log.i(TAG, "points of activity: ${activity.pointPerKm}")
+            //submit activity
+            //todo get name
+        if(points>0) {
+            var name = DataBaseHelper.getNickname()
+            DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()) {
+                Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
             }
         }
     }

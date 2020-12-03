@@ -35,12 +35,16 @@ class MapsFragment : Fragment() {
         Log.i(TAG, "draw again")
         mMap?.addPolyline(PolylineOptions().addAll(points))
         enableMyLocation()
-
     }
     fun enableMyLocation(){
         if (context?.let { ActivityCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) } == PackageManager.PERMISSION_GRANTED){
             Log.i(TAG, "enable location")
             mMap?.isMyLocationEnabled = true
+            mMap?.setOnMyLocationChangeListener {
+                if(MapsActivity.activityActive.not()){
+                    mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoomFactor))
+                }
+            }
         }else{
             if(MapsActivity.askingPermission.not()) {
                 activity?.let { ActivityCompat.requestPermissions(it, MapsActivity.permissions, MapsActivity.REQUEST_LOCATION) }

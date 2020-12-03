@@ -59,14 +59,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-
-
-
-
-
-
-
-        spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+          spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
