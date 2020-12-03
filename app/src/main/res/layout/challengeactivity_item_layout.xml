@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_activity_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_challenge_activity_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/new_activity_name"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/et_challenge_activity_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="5"
+        android:hint="@string/new_activity_name_content"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_point_per_km"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/new_activity_points"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/et_point_per_km"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="2"
+        android:hint="@string/new_activity_points_content"
+        android:inputType="numberSigned"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:importantForAutofill="no" />
+
+    <ImageView
+        android:id="@+id/button_trash"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:contentDescription="@string/trash"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
+</LinearLayout>
