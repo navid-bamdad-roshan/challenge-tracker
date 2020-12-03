@@ -5,25 +5,28 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.database.DataSetObserver
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
+import androidx.lifecycle.Observer
+
 
 
 class MapsActivity : AppCompatActivity(){
@@ -39,33 +42,56 @@ class MapsActivity : AppCompatActivity(){
         var spinner_pos = 0
     }
     lateinit var fragment : MapsFragment
-    lateinit var spinnerAdapter : SpinnerAdapter
+    lateinit var adapter : ArrayAdapter<ChallengeActivity>
+    lateinit var viewModel : MapsActivityViewModel
+
+
     private val locationReceiver : BroadcastReceiver= LocationReceiver().apply {
         setMapsActivityHandler(this@MapsActivity)
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        Log.i(TAG, "set ${spinner_activity.selectedItemPosition}")
-        outState.putInt("activitySpinner", spinner_activity.selectedItemPosition)
-
-
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Create")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         DataBaseHelper.setAppContext(this.applicationContext)
+        viewModel = ViewModelProvider(this).get(MapsActivityViewModel::class.java)
         setupSettings()
         setupFragment()
-        var activity = mutableListOf<ChallengeActivity>(ChallengeActivity("Select an activity", 0f, ""))
+        setSpinner()
+        setUiElements()
+        //register receiver for Broadcasts from GPS service
+        val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
+        registerReceiver(locationReceiver, filter)
+    }
 
+    private fun setSpinner() {
+        spinner_activity.adapter = viewModel.adapter
+        if (viewModel.adapter.count > 1){
+            onSpinnerReady()
+        }else {
+            viewModel.setSpinnerDefaultValue.observe(this, androidx.lifecycle.Observer {
+                onSpinnerReady()
+            })
+        }
+    }
 
+    private fun onSpinnerReady() {
         val dateString  = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
-//        Log.i(TAG, "checkDate $dateString < $testString ${dateString < testString}" )
-//        Log.i(TAG, "checkDate $dateString > $testString ${dateString > testString}")
+        spinner_activity.setSelection(spinner_pos)
+        text_challenge.text = viewModel.currentChallengeName
+        if (dateString > viewModel.currenChallengeDate) {
+            finishActivityDialog("The chosen challenge is expired")
+        }
 
-        //todo get challenge -> set in mainactivity check for finished
+    }
+
+    private fun setChallengeInfo() {
+        adapter = ArrayAdapter(this,
+                android.R.layout.simple_spinner_item,
+                arrayListOf<ChallengeActivity>(ChallengeActivity(
+                        "Select an activity", 0f, "")))
+        val dateString  = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
         var challengeId = DataBaseHelper.getCurrentChallengeId()
         Log.i(TAG, "challengeId: $challengeId")
         if(challengeId == ""){
@@ -73,28 +99,27 @@ class MapsActivity : AppCompatActivity(){
             Toast.makeText(applicationContext, "Please choose a challenge", Toast.LENGTH_SHORT).show()
             this.finish()
         }else {
-            DataBaseHelper.getChallengeById(challengeId) { challenge ->
-                if (dateString > challenge.deadline) {
-                    Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
-                    this.finish()
-                } else {
-                    challenge.activities.forEach() {
-                        Log.i(TAG, "new activity added")
-                        activity.add(it)
+       //     val scope = CoroutineScope(Dispatchers.Default)
+     //       scope.launch {
+                DataBaseHelper.getChallengeById(challengeId) { challenge ->
+                    if (dateString > challenge.deadline) {
+                        Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
+                  //      this.finish()
+                    } else {
+                        challenge.activities.forEach() {
+                            Log.i(TAG, "new activity added")
+                            adapter.add(it)
+                        }
                     }
+                    spinner_activity.adapter = adapter
+                    Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
+                    if (adapter.count > spinner_pos) {
+                            spinner_activity.setSelection(spinner_pos)
+                        }
+                    text_challenge.text = challenge.name
                 }
-                spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, activity)
-                spinner_activity.adapter = spinnerAdapter
-                Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
-                if (spinnerAdapter.count > spinner_pos) {
-                    spinner_activity.setSelection(spinner_pos)
-                }
-            }
+          //  }
         }
-        setUiElements()
-        //register receiver for Broadcasts from GPS service
-        val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
-        registerReceiver(locationReceiver, filter)
     }
 
     private fun setupSettings() {
@@ -138,7 +163,6 @@ class MapsActivity : AppCompatActivity(){
             c_meter.base = meter!!.base
             btn_startStop.text = getString(R.string.stop)
             c_meter.start()
-
             spinner_activity.isEnabled = false
         }
         meter = c_meter
@@ -227,6 +251,18 @@ class MapsActivity : AppCompatActivity(){
         Log.i(TAG, "update $totaldist")
         text_dist.text = "${round(totaldist / 10f)/100f} km"
         fragment.updateMap(location)
+    }
+
+    private fun finishActivityDialog(str:String) {
+        // new game or back to menu when game is over
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Tracking not possible")
+        builder.setMessage(str)
+        builder.setPositiveButton(
+                "Back") { _, _ ->
+            finish()
+        }
+        builder.show()
     }
 
     override fun onDestroy() {
