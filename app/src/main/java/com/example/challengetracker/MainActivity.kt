@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: RecipeViewModel
+    private lateinit var viewModel: MainActivityViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,13 +35,12 @@ class MainActivity : AppCompatActivity() {
         DataBaseHelper.setAppContext(this.applicationContext)
 
         // Getting viewModel instance
-        viewModel = ViewModelProvider(this).get(RecipeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         // Set challenge spinner adapter
         spinner_challenges.adapter = viewModel.adapter
 
 
 
-        Log.i("logg", "curr:"+DataBaseHelper.getCurrentChallengeId())
 
         if (viewModel.challenges.size > 1){
             // Select default challenge in spinner once the challenges data is already in the viewModel
@@ -59,18 +58,19 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-          spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+
+        spinner_challenges.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position>0){
-                    viewModel.selectedChallenge = viewModel.challenges[position-1]
+                if (position > 0) {
+                    viewModel.selectedChallenge = viewModel.challenges[position - 1]
                     DataBaseHelper.setCurrentChallenge(viewModel.selectedChallenge.name, viewModel.selectedChallenge.id)
                     viewModel.currentChallengeId = viewModel.selectedChallenge.id
                     getUserActivities()
-                }else{
+                } else {
                     clearView()
                 }
 
@@ -95,6 +95,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        // Disable the spinner if map screen is recording an activity
+        spinner_challenges.isEnabled = !MapsActivity.activityActive
 
     }
 
