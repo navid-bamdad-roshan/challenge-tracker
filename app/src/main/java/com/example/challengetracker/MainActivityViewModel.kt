@@ -3,6 +3,7 @@ package com.example.challengetracker
 import android.R
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
@@ -29,6 +30,39 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
             DataBaseHelper.getAllChallenges() {
                 challenges = it
+                adapter.clear()
+                adapter.add("Select a challenge")
+                it.map {
+                    adapter.add(it.name)
+                }
+
+                adapter.notifyDataSetChanged()
+
+                // Select current challenge as default for challenges spinner
+                if (currentChallengeId != ""){
+                    val index = challenges.indexOfFirst { it.id == currentChallengeId }
+                    if (index == -1){
+                        currentChallengeId = ""
+                        DataBaseHelper.setCurrentChallenge("","")
+                        setSpinnerDefaultValue.value = Event("0")
+                    }else{
+                        setSpinnerDefaultValue.value = Event(index.toString())
+                        //spinner_challenges.setSelection(index + 1)
+                    }
+
+                }
+
+            }
+        }
+    }
+
+
+    fun updateChallengesAdapter(){
+        val scope = CoroutineScope(Dispatchers.Default)
+        scope.launch {
+
+            DataBaseHelper.getAllChallenges() {
+                challenges = it
                 it.map {
                     adapter.add(it.name)
                 }
@@ -47,6 +81,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             }
         }
     }
+
 
     private val context = getApplication<Application>().applicationContext
 

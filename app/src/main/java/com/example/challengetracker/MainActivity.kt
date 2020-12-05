@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
         if (viewModel.challenges.size > 1){
             // Select default challenge in spinner once the challenges data is already in the viewModel
             val index = viewModel.challenges.indexOfFirst { it.id == viewModel.currentChallengeId }
@@ -99,11 +98,40 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
 
         // Disable the spinner if map screen is recording an activity
         spinner_challenges.isEnabled = !MapsActivity.activityActive
+
+
+        // update the viewModel adapter each time because the new challenges could have been added
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            DataBaseHelper.getAllChallenges() {
+                if (viewModel.challenges.size != it.size) {
+                    viewModel.challenges = it
+                    viewModel.adapter.clear()
+                    viewModel.adapter.add("Select a challenge")
+                    it.map {
+                        viewModel.adapter.add(it.name)
+                    }
+                    viewModel.adapter.notifyDataSetChanged()
+                    // Select current challenge as default for challenges spinner
+                    if (viewModel.currentChallengeId != "") {
+                        val index = viewModel.challenges.indexOfFirst { it.id == viewModel.currentChallengeId }
+                        if (index == -1){
+                            viewModel.currentChallengeId = ""
+                            DataBaseHelper.setCurrentChallenge("","")
+                            spinner_challenges.setSelection(0)
+                        }else{
+                            spinner_challenges.setSelection(index + 1)
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
