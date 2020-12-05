@@ -1,55 +1,71 @@
 package com.example.challengetracker
 
-import android.content.BroadcastReceiver
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_new_challenge.*
 
-class NewChallengeActivity : AppCompatActivity() {
+class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
+
 
     lateinit var myAdapter: ChallengeActivityAdapter
-    val activityList = ArrayList<Pair<String, String>>()
+    var activityList = ArrayList<Pair<String, Float>>()
 
-    var currActivity = 1;
+    var currActivity = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_challenge)
 
-        myAdapter = ChallengeActivityAdapter(activityList)
+        myAdapter = ChallengeActivityAdapter(activityList, this)
 
         rv_activities.layoutManager = LinearLayoutManager(this)
         rv_activities.adapter = myAdapter
 
+
         button_AddActivity.setOnClickListener {
-            addActivityToList("Activity $currActivity","1")
+            addActivityToList("Activity $currActivity",1f)
             currActivity++
         }
-
-        //TODO This challenge needs limiters to prevent wrong date from being written
         button_CreateChallenge.setOnClickListener {
-            val chal = Challenge(et_ChallengeName.text.toString(),
-                                et_Date.text.toString(),
-                                et_GoalPoints.text.toString().toFloat())
+            val chal = Challenge(
+                    if(et_ChallengeName.text.toString() != "") et_ChallengeName.text.toString()
+                        else resources.getString(R.string.default_new_challenge_name),
+                    et_Date.text.toString(),                        //TODO Needs a better representation and default value
+                    if(et_GoalPoints.text.toString() != "") et_GoalPoints.text.toString().toFloat()
+                        else resources.getString(R.string.default_new_challenge_points).toFloat())
 
+            val activities = arrayListOf<ChallengeActivity>()
 
-            /*when opening the settings nickname, check if there is nickname in sharedpreferences
-                if not, blank. Also be able to submit the... activity in the creation view*/
+            activityList.forEach {
+                val chalAct = ChallengeActivity(it.first, it.second.toFloat())
+                activities.add(chalAct)
+            }
+            if(activities.size > 0)
+                chal.activities = activities
 
             DataBaseHelper.addNewChallenge(chal) {}
-
             finish()
         }
     }
 
-    fun addActivityToList(name: String, points: String) {
+    private fun addActivityToList(name: String, points: Float) {
         activityList.add(Pair(name, points))
         myAdapter.notifyDataSetChanged()
     }
 
-    fun removeActivityFromList(name: String) { //TODO or catch position?
-
+    override fun removeActivityFromList(i: Int) {
+        activityList.removeAt(i)
+        myAdapter.notifyDataSetChanged()
     }
+
+    override fun updateName(i: Int, value: String) {
+        activityList[i] = Pair(value, activityList[i].second)
+    }
+
+    override fun updatePoints(i: Int, value: Float) {
+        activityList[i] = Pair(activityList[i].first, value)
+    }
+
+
 }

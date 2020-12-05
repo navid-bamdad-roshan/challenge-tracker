@@ -15,6 +15,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         //PreferenceManager.getDefaultSharedPreferences(this.activity)
 
+        /*when opening the settings nickname, check if there is nickname in sharedpreferences
+                if not, blank. Also be able to submit the... activity in the creation view*/
+
         findPreference<SwitchPreference>("dark_mode")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
             _, newValue ->
             if (!(newValue as Boolean))
