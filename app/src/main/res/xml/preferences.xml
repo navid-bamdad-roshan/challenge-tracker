@@ -14,7 +14,7 @@
             android:key="edit_text_preference"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Nickname" />
+            android:title="@string/nickname_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

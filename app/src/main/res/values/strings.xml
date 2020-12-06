@@ -15,6 +15,7 @@
     <string name="leading_points">Leading points</string>
     <string name="dark_mode_title">Dark Mode</string>
     <string name="dark_mode_summary">Enable or disable dark mode</string>
+    <string name="nickname_title">Nickname</string>
     <string name="create_new_challenge_title">Challenge Creation</string>
     <string name="create_new_challenge_name">Challenge Name: </string>
     <string name="default_new_challenge_name">New Challenge</string>
@@ -26,4 +27,5 @@
     <string name="new_activity_points">Points per km:</string>
     <string name="new_activity_points_content">1</string>
     <string name="trash">Delete this activity</string>
+    <string name="toast_no_activity">Please add at least one activity for the challenge.</string>
 </resources>
