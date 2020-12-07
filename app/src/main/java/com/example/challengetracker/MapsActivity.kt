@@ -93,12 +93,9 @@ class MapsActivity : AppCompatActivity(){
             Toast.makeText(applicationContext, "Please choose a challenge", Toast.LENGTH_SHORT).show()
             this.finish()
         }else {
-       //     val scope = CoroutineScope(Dispatchers.Default)
-     //       scope.launch {
                 DataBaseHelper.getChallengeById(challengeId) { challenge ->
                     if (dateString > challenge.deadline) {
                         Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
-                  //      this.finish()
                     } else {
                         challenge.activities.forEach() {
                             Log.i(TAG, "new activity added")
@@ -112,7 +109,6 @@ class MapsActivity : AppCompatActivity(){
                         }
                     text_challenge.text = challenge.name
                 }
-          //  }
         }
     }
 
@@ -190,13 +186,12 @@ class MapsActivity : AppCompatActivity(){
     private fun submitActivity() {
     //calculate points
             val activity = spinner_activity.selectedItem as ChallengeActivity
-            val points = totaldist * activity.pointPerKm
+            var points = totaldist * activity.pointPerKm
             Log.i(TAG, "points of activity: ${activity.pointPerKm}")
-            //submit activity
-            //todo get name
         if(points>0) {
             var name = DataBaseHelper.getNickname()
-            DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.name, DataBaseHelper.getCurrentChallengeName()) {
+            Log.i(TAG, "name: $name, points $points")
+            DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.id, activity.name) {
                 Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
             }
         }
