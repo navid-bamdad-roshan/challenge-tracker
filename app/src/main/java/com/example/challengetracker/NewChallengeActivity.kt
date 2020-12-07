@@ -2,9 +2,12 @@ package com.example.challengetracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_new_challenge.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
 
@@ -23,6 +26,8 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
         rv_activities.layoutManager = LinearLayoutManager(this)
         rv_activities.adapter = myAdapter
 
+        date_pick.minDate = Calendar.getInstance().timeInMillis
+
 
         button_AddActivity.setOnClickListener {
             addActivityToList("Activity $currActivity",1f)
@@ -36,10 +41,14 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
             }
 
             if (activities.size > 0) {
+                val date = "${date_pick.year}-${date_pick.month+1}-${date_pick.dayOfMonth}"
+
+                Log.d("Help", date)
+
                 val chal = Challenge(
                         if(et_ChallengeName.text.toString() != "") et_ChallengeName.text.toString()
                         else resources.getString(R.string.default_new_challenge_name),
-                        et_Date.text.toString(),                        //TODO Needs a better representation and default value
+                        date,
                         if(et_GoalPoints.text.toString() != "") et_GoalPoints.text.toString().toFloat()
                         else resources.getString(R.string.default_new_challenge_points).toFloat())
 
