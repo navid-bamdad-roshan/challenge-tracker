@@ -66,16 +66,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position > 0) {
+                    clearView()
                     viewModel.selectedChallenge = viewModel.challenges[position - 1]
                     DataBaseHelper.setCurrentChallenge(viewModel.selectedChallenge.name, viewModel.selectedChallenge.id)
                     viewModel.currentChallengeId = viewModel.selectedChallenge.id
                     getUserActivities()
                 } else {
                     clearView()
+                    viewModel.currentChallengeId = ""
+                    DataBaseHelper.setCurrentChallenge("","")
                 }
-
             }
-
         }
 
 
@@ -107,7 +108,20 @@ class MainActivity : AppCompatActivity() {
         spinner_challenges.isEnabled = !MapsActivity.activityActive
 
 
-        viewModel.username = DataBaseHelper.getNickname()
+        //check if user is changed
+        if (viewModel.username != DataBaseHelper.getNickname()){
+            viewModel.username = DataBaseHelper.getNickname()
+            viewModel.currentChallengeId = ""
+            spinner_challenges.setSelection(0)
+            DataBaseHelper.setCurrentChallenge("","")
+            clearView()
+        }else{
+            // update the data because they could be changed
+            if (viewModel.currentChallengeId != ""){
+                getUserActivities()
+            }
+        }
+
 
 
         // update the viewModel adapter each time because the new challenges could have been added
@@ -153,6 +167,7 @@ class MainActivity : AppCompatActivity() {
         tv_goal_points_value.text = ""
         tv_deadline_value.text = ""
         tv_leading_point_value.text = ""
+        viewModel.leadingPoint = 0F
     }
 
     // Getting user activities and the leading points
