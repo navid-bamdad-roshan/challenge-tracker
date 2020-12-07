@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         spinner_challenges.adapter = viewModel.adapter
 
 
+        Log.i("logg","Nickname:"+DataBaseHelper.getNickname())
+        Log.i("logg","Current activity:"+DataBaseHelper.getCurrentActivityName())
+
+
 
         if (viewModel.challenges.size > 1){
             // Select default challenge in spinner once the challenges data is already in the viewModel
@@ -70,11 +74,15 @@ class MainActivity : AppCompatActivity() {
                     viewModel.selectedChallenge = viewModel.challenges[position - 1]
                     DataBaseHelper.setCurrentChallenge(viewModel.selectedChallenge.name, viewModel.selectedChallenge.id)
                     viewModel.currentChallengeId = viewModel.selectedChallenge.id
+                    viewModel.spinnerIsUsedOnce = true
                     getUserActivities()
                 } else {
                     clearView()
-                    viewModel.currentChallengeId = ""
-                    DataBaseHelper.setCurrentChallenge("","")
+                    if (viewModel.spinnerIsUsedOnce){
+                        viewModel.currentChallengeId = ""
+                        DataBaseHelper.setCurrentChallenge("","")
+                    }
+
                 }
             }
         }
@@ -117,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             clearView()
         }else{
             // update the data because they could be changed
-            if (viewModel.currentChallengeId != ""){
+            if ((viewModel.currentChallengeId != "") && (viewModel.selectedChallenge.id != "") ){
                 getUserActivities()
             }
         }
@@ -176,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         scope.launch {
             DataBaseHelper.getUserActivitiesByUsernameAndChallengeId(
                 viewModel.username,
-                viewModel.selectedChallenge.id
+                viewModel.currentChallengeId
             ) {
                 viewModel.userPoints = 0F
                 it.map {item->

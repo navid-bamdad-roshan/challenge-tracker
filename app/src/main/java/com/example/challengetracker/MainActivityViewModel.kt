@@ -18,6 +18,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     var currentChallengeId = ""
     var username = ""
     val setSpinnerDefaultValue = MutableLiveData<Event<String>>()
+    var spinnerIsUsedOnce = false
 
 
     init {
@@ -40,12 +41,14 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
                 // Select current challenge as default for challenges spinner
                 if (currentChallengeId != ""){
+                    // index of first match
                     val index = challenges.indexOfFirst { it.id == currentChallengeId }
                     if (index == -1){
                         currentChallengeId = ""
                         DataBaseHelper.setCurrentChallenge("","")
                         setSpinnerDefaultValue.value = Event("0")
                     }else{
+                        selectedChallenge = challenges[index]
                         setSpinnerDefaultValue.value = Event(index.toString())
                         //spinner_challenges.setSelection(index + 1)
                     }
@@ -89,7 +92,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     var challenges = arrayListOf<Challenge>()
 
-    lateinit var selectedChallenge: Challenge
+    var selectedChallenge = Challenge("","",0F,"")
 
 
     var userPoints = 0F
