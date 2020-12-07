@@ -1,8 +1,6 @@
 package com.example.challengetracker
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.*
 
@@ -10,11 +8,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-
-        //PreferenceManager.getDefaultSharedPreferences(this.activity)
-
-        /*when opening the settings nickname, check if there is nickname in sharedpreferences
-                if not, blank. Also be able to submit the... activity in the creation view*/
 
         findPreference<SwitchPreference>("dark_mode")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
             _, newValue ->
@@ -24,11 +17,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
             this.activity?.recreate()
-            true;
-
+            true
         }
 
-        //TODO: Add a listener for the nickname as well
         val editText = findPreference<EditTextPreference>("edit_text_preference")
 
         if (editText != null) {
@@ -37,20 +28,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             editText.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
                 _, newVal ->
-                DataBaseHelper.setNickname(newVal.toString()) //TODO NOTE, SPACEBAR NAMES GET SET
+                val success = checkNickName(newVal.toString(), editText)
+                if (success)
+                    DataBaseHelper.setNickname(newVal.toString())
 
-                checkNickName(newVal.toString(), editText)
                 true
             }
         }
-
     }
 
-    private fun checkNickName(value: String, editText:  EditTextPreference) {
-        if(value.trim() == "")
+    private fun checkNickName(value: String, editText:  EditTextPreference): Boolean {
+        return if(value.trim() == "") {
             editText.summary = "No nickname assigned"
-        else
+            false
+        } else {
             editText.summary = "Current Nickname: $value"
+            true
+        }
     }
-
 }
