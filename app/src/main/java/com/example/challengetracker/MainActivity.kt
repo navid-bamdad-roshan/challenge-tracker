@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         DataBaseHelper.setAppContext(this.applicationContext)
 
+
         // Getting viewModel instance
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         // Set challenge spinner adapter
@@ -106,6 +107,9 @@ class MainActivity : AppCompatActivity() {
         spinner_challenges.isEnabled = !MapsActivity.activityActive
 
 
+        viewModel.username = DataBaseHelper.getNickname()
+
+
         // update the viewModel adapter each time because the new challenges could have been added
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
@@ -160,8 +164,8 @@ class MainActivity : AppCompatActivity() {
                 viewModel.selectedChallenge.id
             ) {
                 viewModel.userPoints = 0F
-                it.map {
-                    viewModel.userPoints.plus(it.points)
+                it.map {item->
+                    viewModel.userPoints = viewModel.userPoints + item.points
                 }
                 DataBaseHelper.getLeadingUsersByChallengeId(viewModel.selectedChallenge.id) {
                     if (it.size > 0) {
