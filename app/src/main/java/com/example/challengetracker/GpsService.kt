@@ -115,7 +115,7 @@ class GpsService : Service() {
 
     private fun valid(new: Location, old: Location): Boolean {
         // not valid if new position accuracy > 10m
-        if(new.accuracy>10){
+        if(new.accuracy>30){
             return false
         }
         if(new.distanceTo(old)<old.accuracy && new.accuracy > old.accuracy){

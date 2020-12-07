@@ -1,12 +1,10 @@
 package com.example.challengetracker
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
-import androidx.preference.SwitchPreference
+import androidx.preference.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -31,6 +29,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         //TODO: Add a listener for the nickname as well
+        val editText = findPreference<EditTextPreference>("edit_text_preference")
+
+        if (editText != null) {
+            val nick = DataBaseHelper.getNickname()
+            checkNickName(nick, editText)
+
+            editText.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
+                _, newVal ->
+                DataBaseHelper.setNickname(newVal.toString()) //TODO NOTE, SPACEBAR NAMES GET SET
+
+                checkNickName(newVal.toString(), editText)
+                true
+            }
+        }
+
+    }
+
+    private fun checkNickName(value: String, editText:  EditTextPreference) {
+        if(value.trim() == "")
+            editText.summary = "No nickname assigned"
+        else
+            editText.summary = "Current Nickname: $value"
     }
 
 }
