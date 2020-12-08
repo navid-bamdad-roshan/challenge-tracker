@@ -28,4 +28,9 @@
     <string name="new_activity_points_content">1</string>
     <string name="trash">Delete this activity</string>
     <string name="toast_no_activity">Please add at least one activity for the challenge.</string>
+    <string name="kilometers" >%1$.2f km</string>
+    <string name="activateGPS">Please activate GPS</string>
+    <string name="selectActivity">Please select an activity</string>
+    <string name="activitySubmitted">Activity (%1$.2f points) successfully submitted!</string>
+    <string name="chooseChallenge">"Please choose a challenge"</string>
 </resources>

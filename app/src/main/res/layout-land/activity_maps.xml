@@ -69,8 +69,7 @@
             android:id="@+id/text_challenge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="@dimen/maps_activity_value_size" />
+            android:textSize="@dimen/maps_activity_label_size" />
 
         <Spinner
             android:id="@+id/spinner_activity"

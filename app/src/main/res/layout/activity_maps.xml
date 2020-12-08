@@ -26,15 +26,16 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/maps_activity_margin"
+            android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/label_time"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/time"
                 android:textSize="@dimen/maps_activity_label_size" />
@@ -45,24 +46,19 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/maps_activity_value_size" />
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/text_time"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="TextView"-->
-            <!--                android:textSize="24sp" />-->
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/maps_activity_margin"
+            android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/label_dist"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/distance"
                 android:textSize="@dimen/maps_activity_label_size" />
@@ -70,7 +66,7 @@
             <TextView
                 android:id="@+id/text_dist"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textSize="@dimen/maps_activity_value_size" />
         </LinearLayout>
 
@@ -80,7 +76,6 @@
         android:id="@+id/text_challenge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
         android:textSize="@dimen/maps_activity_value_size" />
 
     <Spinner
@@ -88,7 +83,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:popupElevation="@dimen/maps_activity_label_size" />
+        android:popupElevation="@dimen/maps_activity_label_size"
+        android:theme="@style/Theme.ChallengeTracker"/>
 
     <Button
         android:id="@+id/btn_startStop"

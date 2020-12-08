@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
 import java.text.SimpleDateFormat
 import java.util.*
-
+import kotlin.math.roundToInt
 
 
 class MapsActivity : AppCompatActivity(){
@@ -90,7 +90,7 @@ class MapsActivity : AppCompatActivity(){
         Log.i(TAG, "challengeId: $challengeId")
         if(challengeId == ""){
             Log.i(TAG, "invalid challenge id")
-            Toast.makeText(applicationContext, "Please choose a challenge", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.chooseChallenge), Toast.LENGTH_SHORT).show()
             this.finish()
         }else {
                 DataBaseHelper.getChallengeById(challengeId) { challenge ->
@@ -156,7 +156,7 @@ class MapsActivity : AppCompatActivity(){
             spinner_activity.isEnabled = false
         }
         meter = c_meter
-        text_dist.text = "${round(totaldist / 10f) / 100f} km"
+        text_dist.text = getString(R.string.kilometers, totaldist)
         btn_startStop.setOnClickListener {
             if (activityActive) {
                 meter?.let { meter ->
@@ -192,7 +192,7 @@ class MapsActivity : AppCompatActivity(){
             var name = DataBaseHelper.getNickname()
             Log.i(TAG, "name: $name, points $points")
             DataBaseHelper.addNewUserActivity(name, points, DataBaseHelper.getCurrentChallengeId(), activity.id, activity.name) {
-                Toast.makeText(applicationContext, "Activity successfully submitted!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.activitySubmitted, points), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -221,16 +221,16 @@ class MapsActivity : AppCompatActivity(){
                 resetOldActivity()
                 spinner_activity.isEnabled = false
                 meter?.start()
-                text_dist.text = "${round(totaldist / 10f) / 100f} km"
+                text_dist.text = getString(R.string.kilometers, totaldist)
                 btn_startStop.text = getString(R.string.stop)
                 activityActive = true
                 startService(GpsService.getIntent(this))
             } else {
-                Toast.makeText(applicationContext, "Please activate GPS", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.activateGPS), Toast.LENGTH_SHORT).show()
             }
         } else {
             Log.i(TAG, "no activity selected")
-            Toast.makeText(applicationContext, "Please select an activity", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.selectActivity), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -244,7 +244,7 @@ class MapsActivity : AppCompatActivity(){
 
     fun updateMap(location: Location){
         Log.i(TAG, "update $totaldist")
-        text_dist.text = "${round(totaldist / 10f)/100f} km"
+        text_dist.text = getString(R.string.kilometers, totaldist)
         fragment.updateMap(location)
     }
 
@@ -264,6 +264,10 @@ class MapsActivity : AppCompatActivity(){
         super.onDestroy()
         unregisterReceiver(locationReceiver)
         spinner_pos = spinner_activity.selectedItemPosition
+        if(activityActive.not()) {
+            resetOldActivity()
+        }
+
     }
 
 }
