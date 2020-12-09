@@ -29,6 +29,15 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var tmp = intent.getIntExtra("startMaps",0)
+        Log.i("MapsActivity", "start from MainActivity, extra: $tmp")
+
+        if(intent.getIntExtra("startMaps",0) == MapsActivity.START_MAPS){
+            Log.i("MapsActivity", "start from MainActivity")
+            intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+        }
         setContentView(R.layout.activity_main)
 
         setupSettings()

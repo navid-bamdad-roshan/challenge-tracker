@@ -3,6 +3,7 @@ package com.example.challengetracker
 import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
@@ -33,6 +34,7 @@ class MapsActivity : AppCompatActivity(){
         val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         val REQUEST_LOCATION = 7
         val REQUEST_LOCATION_SERVICE = 9
+        val START_MAPS = 13
         var askingPermission = false
         var spinner_pos = 0
     }
@@ -48,6 +50,11 @@ class MapsActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Create")
         super.onCreate(savedInstanceState)
+
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
+
+
         setContentView(R.layout.activity_maps)
         DataBaseHelper.setAppContext(this.applicationContext)
         viewModel = ViewModelProvider(this).get(MapsActivityViewModel::class.java)
@@ -80,37 +87,31 @@ class MapsActivity : AppCompatActivity(){
         }
     }
 
-    private fun setChallengeInfo() {
-        adapter = ArrayAdapter(this,
-                android.R.layout.simple_spinner_item,
-                arrayListOf<ChallengeActivity>(ChallengeActivity(
-                        "Select an activity", 0f, "")))
-        val dateString  = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
-        var challengeId = DataBaseHelper.getCurrentChallengeId()
-        Log.i(TAG, "challengeId: $challengeId")
-        if(challengeId == ""){
-            Log.i(TAG, "invalid challenge id")
-            Toast.makeText(applicationContext, getString(R.string.chooseChallenge), Toast.LENGTH_SHORT).show()
-            this.finish()
-        }else {
-                DataBaseHelper.getChallengeById(challengeId) { challenge ->
-                    if (dateString > challenge.deadline) {
-                        Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
-                    } else {
-                        challenge.activities.forEach() {
-                            Log.i(TAG, "new activity added")
-                            adapter.add(it)
-                        }
-                    }
-                    spinner_activity.adapter = adapter
-                    Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
-                    if (adapter.count > spinner_pos) {
-                            spinner_activity.setSelection(spinner_pos)
-                        }
-                    text_challenge.text = challenge.name
-                }
-        }
-    }
+//    private fun setChallengeInfo() {
+//        adapter = ArrayAdapter(this,
+//                android.R.layout.simple_spinner_item,
+//                arrayListOf<ChallengeActivity>(ChallengeActivity(
+//                        "Select an activity", 0f, "")))
+//        val dateString  = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
+//        var challengeId = DataBaseHelper.getCurrentChallengeId()
+//        Log.i(TAG, "challengeId: $challengeId")
+//        DataBaseHelper.getChallengeById(challengeId) { challenge ->
+//            if (dateString > challenge.deadline) {
+//                Toast.makeText(applicationContext, "The chosen challenge is expired", Toast.LENGTH_SHORT).show()
+//            } else {
+//                challenge.activities.forEach() {
+//                    Log.i(TAG, "new activity added")
+//                    adapter.add(it)
+//                }
+//            }
+//            spinner_activity.adapter = adapter
+//            Log.i(TAG, "pos spinner from savedInstance ${spinner_pos}")
+//            if (adapter.count > spinner_pos) {
+//                spinner_activity.setSelection(spinner_pos)
+//            }
+//            text_challenge.text = challenge.name
+//        }
+//    }
 
     private fun setupSettings() {
         supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
@@ -149,14 +150,14 @@ class MapsActivity : AppCompatActivity(){
     }
 
     private fun setUiElements() {
+        spinner_activity.isEnabled = activityActive.not()
         if (activityActive) {
             c_meter.base = meter!!.base
             c_meter.start()
             btn_startStop.text = getString(R.string.stop)
-            spinner_activity.isEnabled = false
         }
         meter = c_meter
-        text_dist.text = getString(R.string.kilometers, totaldist)
+        text_dist.text = getString(R.string.kilometers, totaldist/1000f)
         btn_startStop.setOnClickListener {
             if (activityActive) {
                 meter?.let { meter ->
@@ -186,7 +187,7 @@ class MapsActivity : AppCompatActivity(){
     private fun submitActivity() {
     //calculate points
             val activity = spinner_activity.selectedItem as ChallengeActivity
-            var points = totaldist * activity.pointPerKm
+            var points = totaldist/1000f * activity.pointPerKm
             Log.i(TAG, "points of activity: ${activity.pointPerKm}")
         if(points>0) {
             var name = DataBaseHelper.getNickname()
@@ -221,7 +222,7 @@ class MapsActivity : AppCompatActivity(){
                 resetOldActivity()
                 spinner_activity.isEnabled = false
                 meter?.start()
-                text_dist.text = getString(R.string.kilometers, totaldist)
+                text_dist.text = getString(R.string.kilometers, totaldist/1000f)
                 btn_startStop.text = getString(R.string.stop)
                 activityActive = true
                 startService(GpsService.getIntent(this))
@@ -244,7 +245,7 @@ class MapsActivity : AppCompatActivity(){
 
     fun updateMap(location: Location){
         Log.i(TAG, "update $totaldist")
-        text_dist.text = getString(R.string.kilometers, totaldist)
+        text_dist.text = getString(R.string.kilometers, totaldist/1000f)
         fragment.updateMap(location)
     }
 

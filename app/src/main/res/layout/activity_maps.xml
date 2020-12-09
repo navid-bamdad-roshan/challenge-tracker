@@ -83,8 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:popupElevation="@dimen/maps_activity_label_size"
-        android:theme="@style/Theme.ChallengeTracker"/>
+        android:popupElevation="@dimen/maps_activity_label_size"/>
 
     <Button
         android:id="@+id/btn_startStop"
