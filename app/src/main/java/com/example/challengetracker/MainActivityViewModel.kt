@@ -1,6 +1,6 @@
 package com.example.challengetracker
 
-import android.R
+
 import android.app.Application
 import android.content.res.Resources
 import android.os.Build
@@ -90,7 +90,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private val context = getApplication<Application>().applicationContext
 
-    var adapter = ArrayAdapter(context, R.layout.simple_spinner_item, arrayListOf(context.getString(com.example.challengetracker.R.string.select_challenge)))
+    var adapter = ArrayAdapter(context, R.layout.spinner_itm, arrayListOf(context.getString(com.example.challengetracker.R.string.select_challenge)))
 
     var challenges = arrayListOf<Challenge>()
 
