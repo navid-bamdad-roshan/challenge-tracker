@@ -73,7 +73,7 @@ class GpsService : Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = 500
             maxWaitTime = 1000
-            smallestDisplacement = 3.0f
+            smallestDisplacement = 1.0f
         }
 
         locationCallback = object: LocationCallback() {
@@ -91,16 +91,15 @@ class GpsService : Service() {
                     it.lastLocation?.let { its_last ->
                         val distanceInMeters = its_last.distanceTo(lastLocation)
                         Log.i(TAG, "check accuracy: acc ${its_last.accuracy}, change ${distanceInMeters}")
-
                         if(valid(its_last, lastLocation!!)) {
                             MapsActivity.totaldist += distanceInMeters.toLong()
                             Log.i(TAG, "Completed: ${MapsActivity.totaldist} meters, (added $distanceInMeters)")
                             sendBroadcast(Intent(LocationReceiver.LOCATION_ACTION).apply {
                                 putExtra("newLoc", its_last)
                             })
+                            lastLocation = it.lastLocation
                         }
                     }
-                    lastLocation = it.lastLocation
                 }
                 super.onLocationResult(result)
             }
@@ -115,6 +114,9 @@ class GpsService : Service() {
 
     private fun valid(new: Location, old: Location): Boolean {
         // not valid if new position accuracy > 10m
+        if(new.accuracy<2){
+            return true
+        }
         if(new.accuracy>10){
             return false
         }
@@ -140,11 +142,12 @@ class GpsService : Service() {
             ""
         }
 
-        val intent = Intent(this, MapsActivity::class.java).apply {
+        val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("startMaps", MapsActivity.START_MAPS)
         }
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val b = NotificationCompat.Builder(this, channelId)
 
         b.setOngoing(true)
