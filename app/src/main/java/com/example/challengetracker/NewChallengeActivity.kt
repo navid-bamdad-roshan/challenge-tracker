@@ -36,15 +36,26 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
         button_CreateChallenge.setOnClickListener {
             val activities = arrayListOf<ChallengeActivity>()
             activityList.forEach {
-                val chalAct = ChallengeActivity(it.first, it.second.toFloat())
+                val chalAct = ChallengeActivity(it.first, it.second)
                 activities.add(chalAct)
             }
 
             if (activities.size > 0) {
-                val date = "${date_pick.year}-${date_pick.month+1}-${date_pick.dayOfMonth}"
+
+                //Setting the date
+                var month = (date_pick.month+1).toString()
+                if(month.length==1)
+                    month = "0$month"
+
+                var day = (date_pick.dayOfMonth+1).toString()
+                if(day.length==1)
+                    day = "0$day"
+
+                val date = "${date_pick.year}-${month}-${day}"
 
                 Log.d("Help", date)
 
+                //Creating the challenge
                 val chal = Challenge(
                         if(et_ChallengeName.text.toString() != "") et_ChallengeName.text.toString()
                         else resources.getString(R.string.default_new_challenge_name),
@@ -52,6 +63,7 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
                         if(et_GoalPoints.text.toString() != "") et_GoalPoints.text.toString().toFloat()
                         else resources.getString(R.string.default_new_challenge_points).toFloat())
 
+                //Assigning all activities for the challenge
                 chal.activities = activities
 
                 DataBaseHelper.addNewChallenge(chal) {}
