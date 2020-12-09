@@ -99,6 +99,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     var userPoints = 0F
     var leadingPoint = 0F
+    var totalPoints = 0F
 
 
 

@@ -180,6 +180,8 @@ class MainActivity : AppCompatActivity() {
         tv_goal_points_value.text = ((viewModel.selectedChallenge.goalPoints * 10.0).roundToInt() / 10.0).toString()
         tv_deadline_value.text = viewModel.selectedChallenge.deadline
         tv_leading_point_value.text = ((viewModel.leadingPoint * 10.0).roundToInt() / 10.0).toString()
+        tv_total_points_value.text = ((viewModel.totalPoints * 10.0).roundToInt() / 10.0).toString()
+        //Log.i("logg", viewModel.totalPoints.toString())
 
 //        tv_user_points_value.text = viewModel.userPoints.toString()
 //        tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
@@ -193,30 +195,40 @@ class MainActivity : AppCompatActivity() {
         tv_deadline_value.text = ""
         tv_leading_point_value.text = ""
         viewModel.leadingPoint = 0F
+        viewModel.totalPoints = 0F
     }
 
     // Getting user activities and the leading points
     private fun getUserActivities() {
         val scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
-            DataBaseHelper.getUserActivitiesByUsernameAndChallengeId(
-                viewModel.username,
-                viewModel.currentChallengeId
-            ) {
-                viewModel.userPoints = 0F
-                it.map {item->
-                    viewModel.userPoints = viewModel.userPoints + item.points
+
+            DataBaseHelper.getUserPointsByChallengeId(viewModel.selectedChallenge.id) {
+                if (it.size > 0) {
+                    var maxPoint = it.maxBy { it.points }?.points
+                    maxPoint?.let {
+                        viewModel.leadingPoint = maxPoint
+                    }
+                    viewModel.totalPoints = 0F
+                    viewModel.userPoints = 0F
+                    it.map { user ->
+                        viewModel.totalPoints = viewModel.totalPoints + user.points
+                    }
                 }
-                DataBaseHelper.getLeadingUsersByChallengeId(viewModel.selectedChallenge.id) {
-                    if (it.size > 0) {
-                        var maxPoint = it.maxBy { it.points }?.points
-                        maxPoint?.let {
-                            viewModel.leadingPoint = maxPoint
-                        }
+                DataBaseHelper.getUserActivitiesByUsernameAndChallengeId(
+                        viewModel.username,
+                        viewModel.currentChallengeId
+                ) {
+                    viewModel.userPoints = 0F
+                    it.map {item->
+                        viewModel.userPoints = viewModel.userPoints + item.points
                     }
                     setChallengeDataToView()
                 }
+
             }
+
+
         }
     }
 

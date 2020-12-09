@@ -250,7 +250,7 @@ object DataBaseHelper{
 
 
 
-    fun getLeadingUsersByChallengeId(challengeId: String, getResult: (ArrayList<User>) -> Unit){
+    fun getUserPointsByChallengeId(challengeId: String, getResult: (ArrayList<User>) -> Unit){
         val userActivitiesCollection = db.collection(userActivitiesCollectionName)
         userActivitiesCollection.whereEqualTo("challengeId", challengeId).get().addOnSuccessListener { userActivities ->
             val userActivitiesArray = arrayListOf<UserActivity>()
