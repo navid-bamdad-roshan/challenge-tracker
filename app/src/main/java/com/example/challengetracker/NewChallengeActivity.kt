@@ -1,9 +1,18 @@
 package com.example.challengetracker
 
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.app.ProgressDialog.show
+import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
+import android.view.View
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_new_challenge.*
 import java.util.*
@@ -14,6 +23,8 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
 
     lateinit var myAdapter: ChallengeActivityAdapter
     var activityList = ArrayList<Pair<String, Float>>()
+
+    public var ep = ""
 
     var currActivity = 1
 
@@ -33,6 +44,8 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
             addActivityToList("Activity $currActivity",1f)
             currActivity++
         }
+
+
         button_CreateChallenge.setOnClickListener {
             val activities = arrayListOf<ChallengeActivity>()
             activityList.forEach {
@@ -98,3 +111,5 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
 
 
 }
+
+

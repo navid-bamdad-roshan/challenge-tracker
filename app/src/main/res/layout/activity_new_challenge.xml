@@ -23,76 +23,66 @@
         android:layout_marginTop="16dp"
         android:text="@string/new_activity_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeDeadline" />
+        app:layout_constraintTop_toBottomOf="@+id/et_GoalPoints" />
 
     <DatePicker
         android:id="@+id/date_pick"
-        android:layout_width="264dp"
-        android:layout_height="83dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="#FFFFFF"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_ChallengeDeadline"
-        app:layout_constraintTop_toBottomOf="@+id/et_GoalPoints" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeDeadline" />
 
     <EditText
         android:id="@+id/et_GoalPoints"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
+        android:layout_height="45dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:ems="8"
         android:hint="@string/default_new_challenge_points"
         android:importantForAutofill="no"
         android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tv_ChallengeGoalPoints"
-        app:layout_constraintTop_toBottomOf="@+id/et_ChallengeName" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeGoalPoints" />
 
     <EditText
         android:id="@+id/et_ChallengeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
         android:autofillHints=""
-        android:ems="10"
+        android:ems="8"
         android:hint="@string/default_new_challenge_name"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tv_ChallengeName"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeName" />
 
     <TextView
         android:id="@+id/tv_ChallengeGoalPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="7sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:text="@string/goal_points"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toStartOf="@+id/et_GoalPoints"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:textSize="16sp"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeName" />
+        app:layout_constraintTop_toBottomOf="@+id/et_ChallengeName" />
 
     <TextView
         android:id="@+id/tv_ChallengeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:padding="7sp"
         android:text="@string/create_new_challenge_name"
-        android:textSize="22dp"
-        app:layout_constraintEnd_toStartOf="@+id/et_ChallengeName"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:textSize="16sp"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
@@ -102,21 +92,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:padding="7sp"
+        android:layout_marginEnd="8dp"
         android:text="@string/deadline"
-        android:textSize="22sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeGoalPoints" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
 
     <TextView
         android:id="@+id/tv_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:padding="10sp"
         android:text="@string/create_new_challenge_title"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -20,7 +20,7 @@
     <string name="dark_mode_summary">Enable or disable dark mode</string>
     <string name="nickname_title">Nickname</string>
     <string name="create_new_challenge_title">Challenge Creation</string>
-    <string name="create_new_challenge_name">Challenge Name: </string>
+    <string name="create_new_challenge_name">Challenge Name</string>
     <string name="default_new_challenge_name">New Challenge</string>
     <string name="default_new_challenge_points">10</string>
     <string name="default_new_challenge_date">YYYY-MM-DD</string>
