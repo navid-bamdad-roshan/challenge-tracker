@@ -10,6 +10,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationManager
 import android.os.*
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
@@ -105,10 +106,12 @@ class GpsService : Service() {
             }
         }
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             stopTrackingService()
         }else {
-            fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+                fusedClient.requestLocationUpdates(locationRequest, locationCallback, null)
+
         }
     }
 
@@ -138,7 +141,6 @@ class GpsService : Service() {
             createNotificationChannel("gps_tracker", "GPS Tracker")
         } else {
             // If earlier version channel ID is not used
-            // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
             ""
         }
 

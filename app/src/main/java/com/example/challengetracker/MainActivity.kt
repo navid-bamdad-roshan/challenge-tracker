@@ -29,11 +29,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var tmp = intent.getIntExtra("startMaps",0)
-        Log.i("MapsActivity", "start from MainActivity, extra: $tmp")
-
         if(intent.getIntExtra("startMaps",0) == MapsActivity.START_MAPS){
-            Log.i("MapsActivity", "start from MainActivity")
+            Log.i("MainActivity", "start from MainActivity")
             intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }

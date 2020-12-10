@@ -3,6 +3,7 @@ package com.example.challengetracker
 import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -29,17 +30,16 @@ class MapsActivity : AppCompatActivity(){
     companion object{
         var totaldist = 0f
         var activityActive = false
-        val TAG = "MapsActivity"
+        const val TAG = "MapsActivity"
         var meter :Chronometer? = null
         val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        val REQUEST_LOCATION = 7
-        val REQUEST_LOCATION_SERVICE = 9
-        val START_MAPS = 13
+        const val REQUEST_LOCATION = 7
+        const val REQUEST_LOCATION_SERVICE = 9
+        const val START_MAPS = 13
         var askingPermission = false
         var spinner_pos = 0
     }
     lateinit var fragment : MapsFragment
-    lateinit var adapter : ArrayAdapter<ChallengeActivity>
     lateinit var viewModel : MapsActivityViewModel
 
 
@@ -50,15 +50,9 @@ class MapsActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Create")
         super.onCreate(savedInstanceState)
-
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-
-
         setContentView(R.layout.activity_maps)
         DataBaseHelper.setAppContext(this.applicationContext)
         viewModel = ViewModelProvider(this).get(MapsActivityViewModel::class.java)
-        setupSettings()
         setupFragment()
         setSpinner()
         setUiElements()
@@ -113,14 +107,14 @@ class MapsActivity : AppCompatActivity(){
 //        }
 //    }
 
-    private fun setupSettings() {
-        supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
-        val darkMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
-        if (!darkMode)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-    }
+//    private fun setupSettings() {
+//        supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
+//        val darkMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
+//        if (!darkMode)
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        else
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//    }
     private fun setupFragment() {
         fragment = MapsFragment()
         val fragmentManager = supportFragmentManager
@@ -215,24 +209,28 @@ class MapsActivity : AppCompatActivity(){
         }
     }
     private fun startNewActivity() {
-        if (spinner_activity.selectedItemPosition != 0) {
-            if (checkGpsActivated()) {
-                Log.i(TAG, "startService, activity pos ok")
-                //reset
-                resetOldActivity()
-                spinner_activity.isEnabled = false
-                meter?.start()
-                text_dist.text = getString(R.string.kilometers, totaldist/1000f)
-                btn_startStop.text = getString(R.string.stop)
-                activityActive = true
-                startService(GpsService.getIntent(this))
-            } else {
-                Toast.makeText(applicationContext, getString(R.string.activateGPS), Toast.LENGTH_SHORT).show()
-            }
-        } else {
+        if (spinner_activity.selectedItemPosition == 0) {
             Log.i(TAG, "no activity selected")
             Toast.makeText(applicationContext, getString(R.string.selectActivity), Toast.LENGTH_SHORT).show()
+            return
         }
+        if (checkGpsActivated().not()) {
+            Toast.makeText(applicationContext, getString(R.string.activateGPS), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.i(TAG, "startService, activity pos and gps ok")
+        //reset
+        resetOldActivity()
+        spinner_activity.isEnabled = false
+        totaldist = 1111f
+        meter?.start()
+        text_dist.text = getString(R.string.kilometers, totaldist/1000f)
+        btn_startStop.text = getString(R.string.stop)
+        activityActive = true
+        startService(GpsService.getIntent(this))
+
+
     }
 
     private fun resetOldActivity() {
@@ -270,5 +268,4 @@ class MapsActivity : AppCompatActivity(){
         }
 
     }
-
 }
