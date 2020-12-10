@@ -223,7 +223,6 @@ class MapsActivity : AppCompatActivity(){
         //reset
         resetOldActivity()
         spinner_activity.isEnabled = false
-        totaldist = 1111f
         meter?.start()
         text_dist.text = getString(R.string.kilometers, totaldist/1000f)
         btn_startStop.text = getString(R.string.stop)
