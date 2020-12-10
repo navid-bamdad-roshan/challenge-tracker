@@ -54,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="@dimen/main_activity_parts_margin"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:text="@string/your_points"
         android:textSize="@dimen/main_activity_text_size"
@@ -68,7 +68,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/main_activity_parts_margin"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:textSize="@dimen/main_activity_text_size"
         app:layout_constraintEnd_toEndOf="parent"
@@ -133,6 +133,33 @@
         app:layout_constraintStart_toEndOf="@+id/tv_leading_point_text"
         app:layout_constraintTop_toBottomOf="@+id/tv_goal_points_value" />
 
+    <TextView
+        android:id="@+id/tv_total_points_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/total_points"
+        android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintEnd_toStartOf="@+id/tv_total_points_value"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_leading_point_value" />
+
+    <TextView
+        android:id="@+id/tv_total_points_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="@dimen/main_activity_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_total_points_text"
+        app:layout_constraintTop_toBottomOf="@+id/tv_leading_point_value" />
+
 
     <TextView
         android:id="@+id/tv_deadline_text"
@@ -146,7 +173,7 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_deadline_value"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_leading_point_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_points_value" />
 
     <TextView
         android:id="@+id/tv_deadline_value"
@@ -159,7 +186,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tv_deadline_text"
-        app:layout_constraintTop_toBottomOf="@+id/tv_leading_point_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_points_value" />
 
     <Button
         android:id="@+id/btn_create_new_challenge"
