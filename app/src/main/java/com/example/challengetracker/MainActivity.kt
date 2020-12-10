@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,22 +48,18 @@ class MainActivity : AppCompatActivity() {
         spinner_challenges.adapter = viewModel.adapter
 
 
-        Log.i("logg","Nickname:"+DataBaseHelper.getNickname())
-        Log.i("logg","Current activity:"+DataBaseHelper.getCurrentActivityName())
-
-
 
         if (viewModel.challenges.size > 1){
             // Select default challenge in spinner once the challenges data is already in the viewModel
             val index = viewModel.challenges.indexOfFirst { it.id == viewModel.currentChallengeId }
-            // plus one because first row is "select a challenge"
+            // plus one because first row is "select challenge"
             spinner_challenges.setSelection(index.plus(1))
 
         }else {
             // Select default challenge in spinner once the data is received from database
             viewModel.setSpinnerDefaultValue.observe(this, Observer { event ->
                 event?.getCurrentChallengeIndex()?.let {
-                    // plus one because first row is "select a challenge"
+                    // plus one because first row is "select challenge"
                     spinner_challenges.setSelection(it.toInt().plus(1))
                 }
             })
@@ -103,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
         btn_start_activity.setOnClickListener {
             if(DataBaseHelper.getCurrentChallengeId() == ""){
-                Toast.makeText(applicationContext, "Please choose a challenge", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.choose_challenge_first), Toast.LENGTH_SHORT).show()
             }else {
                 intent = Intent(this, MapsActivity::class.java)
                 startActivity(intent)
@@ -120,6 +117,12 @@ class MainActivity : AppCompatActivity() {
 
         // Disable the spinner if map screen is recording an activity
         spinner_challenges.isEnabled = !MapsActivity.activityActive
+
+        if (MapsActivity.activityActive){
+            btn_start_activity.text = getString(R.string.back_to_activity)
+        }else{
+            btn_start_activity.text = getString(R.string.start_new_activity)
+        }
 
 
         //check if user is changed
@@ -145,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                 if (viewModel.challenges.size != it.size) {
                     viewModel.challenges = it
                     viewModel.adapter.clear()
-                    viewModel.adapter.add("Select a challenge")
+                    viewModel.adapter.add(getString(R.string.select_challenge))
                     it.map {
                         viewModel.adapter.add(it.name)
                     }
@@ -170,10 +173,17 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setChallengeDataToView(){
-        tv_user_points_value.text = viewModel.userPoints.toString()
-        tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
+        tv_user_points_value.text = ((viewModel.userPoints * 10.0).roundToInt() / 10.0).toString()
+        tv_goal_points_value.text = ((viewModel.selectedChallenge.goalPoints * 10.0).roundToInt() / 10.0).toString()
         tv_deadline_value.text = viewModel.selectedChallenge.deadline
-        tv_leading_point_value.text = viewModel.leadingPoint.toString()
+        tv_leading_point_value.text = ((viewModel.leadingPoint * 10.0).roundToInt() / 10.0).toString()
+        tv_total_points_value.text = ((viewModel.totalPoints * 10.0).roundToInt() / 10.0).toString()
+        //Log.i("logg", viewModel.totalPoints.toString())
+
+//        tv_user_points_value.text = viewModel.userPoints.toString()
+//        tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
+//        tv_deadline_value.text = viewModel.selectedChallenge.deadline
+//        tv_leading_point_value.text = viewModel.leadingPoint.toString()
     }
 
     private fun clearView(){
@@ -182,30 +192,40 @@ class MainActivity : AppCompatActivity() {
         tv_deadline_value.text = ""
         tv_leading_point_value.text = ""
         viewModel.leadingPoint = 0F
+        viewModel.totalPoints = 0F
     }
 
     // Getting user activities and the leading points
     private fun getUserActivities() {
         val scope = CoroutineScope(Dispatchers.Default)
         scope.launch {
-            DataBaseHelper.getUserActivitiesByUsernameAndChallengeId(
-                viewModel.username,
-                viewModel.currentChallengeId
-            ) {
-                viewModel.userPoints = 0F
-                it.map {item->
-                    viewModel.userPoints = viewModel.userPoints + item.points
+
+            DataBaseHelper.getUserPointsByChallengeId(viewModel.selectedChallenge.id) {
+                if (it.size > 0) {
+                    var maxPoint = it.maxBy { it.points }?.points
+                    maxPoint?.let {
+                        viewModel.leadingPoint = maxPoint
+                    }
+                    viewModel.totalPoints = 0F
+                    viewModel.userPoints = 0F
+                    it.map { user ->
+                        viewModel.totalPoints = viewModel.totalPoints + user.points
+                    }
                 }
-                DataBaseHelper.getLeadingUsersByChallengeId(viewModel.selectedChallenge.id) {
-                    if (it.size > 0) {
-                        var maxPoint = it.maxBy { it.points }?.points
-                        maxPoint?.let {
-                            viewModel.leadingPoint = maxPoint
-                        }
+                DataBaseHelper.getUserActivitiesByUsernameAndChallengeId(
+                        viewModel.username,
+                        viewModel.currentChallengeId
+                ) {
+                    viewModel.userPoints = 0F
+                    it.map {item->
+                        viewModel.userPoints = viewModel.userPoints + item.points
                     }
                     setChallengeDataToView()
                 }
+
             }
+
+
         }
     }
 

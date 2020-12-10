@@ -1,8 +1,10 @@
 package com.example.challengetracker
 
-import android.R
+
 import android.app.Application
+import android.content.res.Resources
 import android.os.Build
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
@@ -32,7 +34,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             DataBaseHelper.getAllChallenges() {
                 challenges = it
                 adapter.clear()
-                adapter.add("Select a challenge")
+                adapter.add(context.getString(com.example.challengetracker.R.string.select_challenge))
                 it.map {
                     adapter.add(it.name)
                 }
@@ -88,7 +90,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     private val context = getApplication<Application>().applicationContext
 
-    var adapter = ArrayAdapter(context, R.layout.simple_spinner_item, arrayListOf("Select a challenge"))
+    var adapter = ArrayAdapter(context, R.layout.spinner_itm, arrayListOf(context.getString(com.example.challengetracker.R.string.select_challenge)))
 
     var challenges = arrayListOf<Challenge>()
 
@@ -97,6 +99,16 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     var userPoints = 0F
     var leadingPoint = 0F
+<<<<<<< HEAD
+=======
+    var totalPoints = 0F
+
+
+
+
+
+
+>>>>>>> e843410a06550897440df4039403638196bcdd61
 }
 
 
