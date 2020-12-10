@@ -22,33 +22,34 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/new_activity_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_GoalPoints" />
+        app:layout_constraintStart_toEndOf="@+id/et_GoalPoints"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <DatePicker
         android:id="@+id/date_pick"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="#FFFFFF"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_ChallengeName"
+        app:layout_constraintBottom_toTopOf="@+id/button_CreateChallenge"
+        app:layout_constraintEnd_toStartOf="@+id/rv_activities"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeDeadline" />
 
     <EditText
         android:id="@+id/et_GoalPoints"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:ems="8"
         android:hint="@string/default_new_challenge_points"
         android:importantForAutofill="no"
         android:inputType="number"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/et_ChallengeName"
         app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeGoalPoints" />
 
     <EditText
@@ -65,16 +66,27 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_ChallengeName" />
 
     <TextView
-        android:id="@+id/tv_ChallengeGoalPoints"
+        android:id="@+id/tv_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/create_new_challenge_title"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ChallengeGoalPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/goal_points"
         android:textSize="16sp"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_ChallengeName" />
+        app:layout_constraintStart_toEndOf="@+id/et_ChallengeName"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
 
     <TextView
         android:id="@+id/tv_ChallengeName"
@@ -92,23 +104,12 @@
         android:id="@+id/tv_ChallengeDeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/deadline"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Title" />
-
-    <TextView
-        android:id="@+id/tv_Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/create_new_challenge_title"
-        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/et_ChallengeName" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_activities"
@@ -116,11 +117,10 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/button_CreateChallenge"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_AddActivity" />
-
+        app:layout_constraintStart_toEndOf="@+id/et_GoalPoints"
+        app:layout_constraintTop_toBottomOf="@+id/button_AddActivity"
+        app:layout_constraintVertical_chainStyle="spread" />
 </androidx.constraintlayout.widget.ConstraintLayout>
