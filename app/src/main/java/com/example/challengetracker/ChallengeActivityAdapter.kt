@@ -1,6 +1,5 @@
 package com.example.challengetracker
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.challengeactivity_item_layout.view.*
 
 
-class ChallengeActivityAdapter(val dataset: List<Pair<String, Float>>, val datRem : DatasetAssister) : RecyclerView.Adapter<ChallengeActivityHolder>() {
+class ChallengeActivityAdapter(private var listener : dbHelper) : RecyclerView.Adapter<ChallengeActivityHolder>() {
 
-    val removalInterface = datRem
+    interface dbHelper {
+        fun removeActivityFromList(i : Int)
+        fun updateName(i: Int, value: String)
+        fun updatePoints(i: Int, value: Float)
+    }
+
+    var data = arrayListOf<ActivityEntity>()
+        set(value) {
+        field = value
+        notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChallengeActivityHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.challengeactivity_item_layout, parent, false)
@@ -21,18 +30,18 @@ class ChallengeActivityAdapter(val dataset: List<Pair<String, Float>>, val datRe
     }
 
     override fun onBindViewHolder(holder: ChallengeActivityHolder, position: Int) {
-        val data = dataset[position] //The challenge?
+        val data = data[position] //The challenge?
 
-        holder.item.et_challenge_activity_name.hint = data.first
+        holder.item.et_challenge_activity_name.hint = data.name
         holder.item.et_challenge_activity_name.doOnTextChanged { text, _, _, _ ->
-            datRem.updateName(position,
+            listener.updateName(position,
                     if(text != "") text.toString()
                     else holder.item.et_challenge_activity_name.hint.toString())
         }
 
-        holder.item.et_point_per_km.hint = data.second.toString()
+        holder.item.et_point_per_km.hint = data.points.toString()
         holder.item.et_point_per_km.doOnTextChanged { text, _, _, _ ->
-            datRem.updatePoints(position,
+            listener.updatePoints(position,
                     if(text != "") text.toString().toFloat()
                     else holder.item.et_point_per_km.hint.toString().toFloat())
         }
@@ -43,10 +52,10 @@ class ChallengeActivityAdapter(val dataset: List<Pair<String, Float>>, val datRe
     }
 
     override fun getItemCount(): Int {
-        return dataset.size
+        return data.size
     }
 
     fun removeActivityFromList(i: Int) {
-        removalInterface.removeActivityFromList(i)
+        listener.removeActivityFromList(i)
     }
 }

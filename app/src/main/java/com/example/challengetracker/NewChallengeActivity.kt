@@ -1,30 +1,20 @@
 package com.example.challengetracker
 
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.ProgressDialog.show
-import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.format.DateFormat
-import android.util.Log
-import android.view.View
-import android.widget.DatePicker
-import android.widget.TimePicker
+import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_new_challenge.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
+class NewChallengeActivity : AppCompatActivity() {
 
 
-    lateinit var myAdapter: ChallengeActivityAdapter
-    var activityList = ArrayList<Pair<String, Float>>()
-
-    public var ep = ""
+    private lateinit var myAdapter: ChallengeActivityAdapter
+    //var activityList = ArrayList<Pair<String, Float>>()
+    var activityList = ArrayList<ActivityEntity>()
 
     var currActivity = 1
 
@@ -32,24 +22,37 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_challenge)
 
-        myAdapter = ChallengeActivityAdapter(activityList, this)
+        myAdapter = ChallengeActivityAdapter(object : ChallengeActivityAdapter.dbHelper{
+            override fun removeActivityFromList(i: Int) {
+                activityList.removeAt(i)
+                myAdapter.notifyDataSetChanged()
+            }
+
+            override fun updateName(i: Int, value: String) {
+                activityList[i].name = value
+            }
+
+            override fun updatePoints(i: Int, value: Float) {
+                activityList[i].points = value
+            }
+        })
+
+        myAdapter.data = activityList
 
         rv_activities.layoutManager = LinearLayoutManager(this)
         rv_activities.adapter = myAdapter
 
         date_pick.minDate = Calendar.getInstance().timeInMillis
 
-
         button_AddActivity.setOnClickListener {
             addActivityToList("Activity $currActivity",1f)
             currActivity++
         }
 
-
         button_CreateChallenge.setOnClickListener {
             val activities = arrayListOf<ChallengeActivity>()
             activityList.forEach {
-                val chalAct = ChallengeActivity(it.first, it.second)
+                val chalAct = ChallengeActivity(it.name, it.points)
                 activities.add(chalAct)
             }
 
@@ -66,7 +69,6 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
 
                 val date = "${date_pick.year}-${month}-${day}"
 
-                Log.d("Help", date)
 
                 //Creating the challenge
                 val chal = Challenge(
@@ -92,21 +94,45 @@ class NewChallengeActivity : AppCompatActivity(), DatasetAssister {
     }
 
     private fun addActivityToList(name: String, points: Float) {
-        activityList.add(Pair(name, points))
+        activityList.add(ActivityEntity(name, points))
         myAdapter.notifyDataSetChanged()
     }
 
-    override fun removeActivityFromList(i: Int) {
-        activityList.removeAt(i)
-        myAdapter.notifyDataSetChanged()
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("challenge_name", et_ChallengeName.text.toString())
+        outState.putString("goal_points", et_GoalPoints.text.toString())
+        outState.putInt("currAc", currActivity)
+
+        outState.putInt("year", date_pick.year)
+        outState.putInt("month", date_pick.month)
+        outState.putInt("day", date_pick.dayOfMonth)
+
+
+        outState.putParcelableArrayList("dataAdapter", activityList)
     }
 
-    override fun updateName(i: Int, value: String) {
-        activityList[i] = Pair(value, activityList[i].second)
-    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
 
-    override fun updatePoints(i: Int, value: Float) {
-        activityList[i] = Pair(activityList[i].first, value)
+        et_ChallengeName.setText(savedInstanceState.getString("challenge_name"),TextView.BufferType.EDITABLE)
+        et_GoalPoints.setText(savedInstanceState.getString("goal_points"),TextView.BufferType.EDITABLE)
+        currActivity = savedInstanceState.getInt("currAc")
+
+        date_pick.init(savedInstanceState.getInt("year"),
+                savedInstanceState.getInt("month"),
+                savedInstanceState.getInt("day"),
+                null)
+
+        val acs = savedInstanceState.getParcelableArrayList<ActivityEntity>("dataAdapter")
+
+        if(acs != null) {
+            activityList = acs
+            myAdapter.data = activityList
+            myAdapter.notifyDataSetChanged()
+        }
     }
 
 
