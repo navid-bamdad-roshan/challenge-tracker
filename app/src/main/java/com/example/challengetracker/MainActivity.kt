@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity() {
         tv_goal_points_value.text = ""
         tv_deadline_value.text = ""
         tv_leading_point_value.text = ""
+        tv_total_points_value.text = ""
         viewModel.leadingPoint = 0F
         viewModel.totalPoints = 0F
     }
