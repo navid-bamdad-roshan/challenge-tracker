@@ -181,7 +181,7 @@ class MapsActivity : AppCompatActivity(){
     private fun submitActivity() {
     //calculate points
             val activity = spinner_activity.selectedItem as ChallengeActivity
-            var points = totaldist/1000f * activity.pointPerKm
+            var points = totaldist * activity.pointPerKm/1000f
             Log.i(TAG, "points of activity: ${activity.pointPerKm}")
         if(points>0) {
             var name = DataBaseHelper.getNickname()

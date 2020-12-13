@@ -82,23 +82,29 @@ class GpsService : Service() {
                 result?.let {
                     Log.i(TAG, "got non null result")
                     MapsFragment.points.add(LatLng(it.lastLocation.latitude, it.lastLocation.longitude))
-                    if(lastLocation == null){
+                    if(lastLocation == null ){
+                        if( it.lastLocation.accuracy <30){
                         lastLocation = it.lastLocation
                         sendBroadcast(Intent(LocationReceiver.LOCATION_ACTION).apply {
                             putExtra("newLoc", lastLocation)
                         })
+                        }
                         return@let
                     }
                     it.lastLocation?.let { its_last ->
                         val distanceInMeters = its_last.distanceTo(lastLocation)
                         Log.i(TAG, "check accuracy: acc ${its_last.accuracy}, change ${distanceInMeters}")
                         if(valid(its_last, lastLocation!!)) {
+                            Log.i(TAG, "valid value")
                             MapsActivity.totaldist += distanceInMeters.toLong()
                             Log.i(TAG, "Completed: ${MapsActivity.totaldist} meters, (added $distanceInMeters)")
                             sendBroadcast(Intent(LocationReceiver.LOCATION_ACTION).apply {
                                 putExtra("newLoc", its_last)
                             })
                             lastLocation = it.lastLocation
+                        }else{
+                            Log.i(TAG, "no valid value")
+
                         }
                     }
                 }
@@ -120,7 +126,7 @@ class GpsService : Service() {
         if(new.accuracy<2){
             return true
         }
-        if(new.accuracy>10){
+        if(new.accuracy>30){
             return false
         }
         if(new.distanceTo(old)<old.accuracy && new.accuracy > old.accuracy){
