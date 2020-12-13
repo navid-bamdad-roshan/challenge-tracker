@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.lang.Math.round
 import java.text.SimpleDateFormat
@@ -56,9 +57,25 @@ class MapsActivity : AppCompatActivity(){
         setupFragment()
         setSpinner()
         setUiElements()
+        setupSettings()
         //register receiver for Broadcasts from GPS service
         val filter = IntentFilter(LocationReceiver.LOCATION_ACTION)
         registerReceiver(locationReceiver, filter)
+    }
+
+    private fun setupSettings() {
+        supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
+        val darkMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
+        if (!darkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            spinner_activity.setBackgroundColor(resources.getColor(R.color.white, theme))
+        }
+
+        else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            spinner_activity.setBackgroundColor(resources.getColor(R.color.gray, theme))
+        }
+
     }
 
     private fun setSpinner() {
