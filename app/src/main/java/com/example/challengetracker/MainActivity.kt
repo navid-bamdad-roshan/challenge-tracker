@@ -178,12 +178,6 @@ class MainActivity : AppCompatActivity() {
         tv_deadline_value.text = viewModel.selectedChallenge.deadline
         tv_leading_point_value.text = ((viewModel.leadingPoint * 10.0).roundToInt() / 10.0).toString()
         tv_total_points_value.text = ((viewModel.totalPoints * 10.0).roundToInt() / 10.0).toString()
-        //Log.i("logg", viewModel.totalPoints.toString())
-
-//        tv_user_points_value.text = viewModel.userPoints.toString()
-//        tv_goal_points_value.text = viewModel.selectedChallenge.goalPoints.toString()
-//        tv_deadline_value.text = viewModel.selectedChallenge.deadline
-//        tv_leading_point_value.text = viewModel.leadingPoint.toString()
     }
 
     private fun clearView(){
