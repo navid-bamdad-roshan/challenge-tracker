@@ -1,6 +1,5 @@
 package com.example.challengetracker
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,9 +41,6 @@ class ChallengeActivityAdapter(private var listener : dbHelper) : RecyclerView.A
 
         holder.item.et_point_per_km.hint = data.points.toString()
         holder.item.et_point_per_km.doOnTextChanged { text, _, _, _ ->
-            Log.d("Help", "part1")
-            Log.d("Help", "text val ${text.toString()}")
-            Log.d("Help", (text.isNullOrEmpty()).toString())
             listener.updatePoints(position,
                     if(!text.isNullOrEmpty()) text.toString().toFloat()
                     else holder.item.et_point_per_km.hint.toString().toFloat())

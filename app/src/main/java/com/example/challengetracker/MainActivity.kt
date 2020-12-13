@@ -233,10 +233,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupSettings() {
         supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment())
         val darkMode = getDefaultSharedPreferences(this).getBoolean("dark_mode", false)
-        if (!darkMode)
+        if (!darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        else
+            spinner_challenges.setBackgroundColor(resources.getColor(R.color.white, theme))
+        }
+
+        else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            spinner_challenges.setBackgroundColor(resources.getColor(R.color.gray, theme))
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

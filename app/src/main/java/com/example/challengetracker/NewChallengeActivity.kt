@@ -2,7 +2,6 @@ package com.example.challengetracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +13,6 @@ class NewChallengeActivity : AppCompatActivity() {
 
 
     private lateinit var myAdapter: ChallengeActivityAdapter
-    //var activityList = ArrayList<Pair<String, Float>>()
     var activityList = ArrayList<ActivityEntity>()
 
     var currActivity = 1
@@ -34,9 +32,7 @@ class NewChallengeActivity : AppCompatActivity() {
             }
 
             override fun updatePoints(i: Int, value: Float) {
-                Log.d("Help", "part2")
                 activityList[i].points = value
-                Log.d("Help", "part3")
             }
         })
 
